@@ -90,7 +90,7 @@ public class Connection {
 	 * @throws IOException
 	 */
 	public CCMessage sendCommand( CCMessage command ) throws IOException {
-		socket.setSoTimeout( 2000 );
+		//socket.setSoTimeout( 2000 );
 		out.println( command.toString() );
 		return CCMessage.fromString( in.readLine() );
 	}
