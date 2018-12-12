@@ -33,7 +33,7 @@ public class ClientPlayer extends Player {
 				String x = in.readLine();
 				return CCMessage.fromString( x );
 			} catch( Exception e ) {
-				if( interrupted() | gm.game_cancelled ) throw new InterruptedException();
+				if( interrupted() || gm.game_cancelled ) throw new InterruptedException();
 				if( gm.game_started ) throw new ContinueException();
 			}
 		}
@@ -85,7 +85,7 @@ public class ClientPlayer extends Player {
 				System.out.println( "Interrupting #" + id );
 				return;
 			} catch( ContinueException e ) {
-				break;
+				continue;
 			} catch( Exception e ) {
 				System.out.println( "Exception in #" + id + ": " + e.getMessage() );
 				try {
@@ -102,10 +102,12 @@ public class ClientPlayer extends Player {
 	@Override
 	public void permit() {
 		permitted = true;
+		System.out.println( "Player #" + id + " permitted" );
 	}
 	
 	@Override
 	public CCMessage recv() {
+		if( !permitted ) return new CCMessage( "not_permitted" );
 		while( received.isEmpty() );
 		return received.poll();
 	}
@@ -114,6 +116,7 @@ public class ClientPlayer extends Player {
 	public void halt() {
 		permitted = false;
 		received.clear();
+		System.out.println( "Player #" + id + " halted" );
 	}
 	
 	@Override

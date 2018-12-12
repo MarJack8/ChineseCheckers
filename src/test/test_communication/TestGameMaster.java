@@ -59,12 +59,14 @@ class TestGameMaster {
 				try {
 					System.out.println( "Test: recvSignal" );
 					CCMessage msg = client.recvSignal();
+					System.out.println( "Test: client recv " + msg.getSignal() );
 					received.add( msg );
 					if( msg.getSignal().equals( "end" ) ) {
 						System.out.println( "Test: client received 'end'" );
 						break;
 					}
 					if( msg.getSignal().equals( "ping" ) ) {
+						System.out.println( "Test: client sending pong" );
 						CCMessage ret = client.sendCommand( new CCMessage( "pong" ) );
 						System.out.println( "Test: client received '" + ret.toString() + "'" );
 					}
@@ -161,18 +163,24 @@ class TestGameMaster {
 	void test_recvFromPlayer() {
 		try {
 			SomeServer server = new SomeServer();
-			server.port = 6660;
+			server.port = 6661;
 			server.start();
 			new SomeClient( ip, server.port );
 			Thread.sleep( 100 );
+			
+			server.join();
+			
 			server.gm.permitPlayer( 0 );
+			System.out.println( "Test: sending ping" );
 			server.gm.sendToPlayer( 0, new CCMessage( "ping" ) );
+			System.out.println( "Test: waiting for pong" );
 			CCMessage res = server.gm.recvFromPlayer( 0 );
 			server.gm.haltPlayer( 0 );
 			assertEquals( "pong", res.toString() );
 			Thread.sleep( 100 );
 			server.gm.sendToPlayer( 0, new CCMessage( "thanks" ) );
 			Thread.sleep( 100 );
+			
 			server.gm.sendToPlayer( 0, new CCMessage( "end" ) );
 			System.out.println( "Test: closing" );
 			server.gm.close();
