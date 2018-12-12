@@ -76,6 +76,7 @@ public class Board {
     public void flushHighlighted() {
         for (Field field : highlighted) {
             field.setStroke(Paint.valueOf("BLACK"));
+            field.setFill(Paint.valueOf(field.getColor()));
         }
         highlighted.clear();
     }
@@ -91,6 +92,7 @@ public class Board {
         if (field.getXCord() != -1 && field.getColor().equals("WHITE") && !(highlighted.contains(field))) {
             highlighted.add(field);
             this.getNode(field.getYCord(), field.getXCord()).setStroke(Paint.valueOf(FieldColor.LEGAL.getColor()));
+            this.getNode(field.getYCord(), field.getXCord()).setFill(Paint.valueOf("MAGENTA"));
         }
     }
 
