@@ -7,13 +7,10 @@ import game.FieldColor;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import jdk.nashorn.internal.objects.NativeUint8Array;
 
 public class Client extends Application {
 
