@@ -101,7 +101,7 @@ public class Board {
 
             try {
             if (!this.getNode(y - 1, x - 1).getColor().equals("WHITE")) {
-               if(this.getNode(y - 2, x - 1).getColor().equals("WHITE")) {
+               if(this.getNode(y - 2, x - 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y - 2, x - 1))) {
                    highlightField(this.getNode(y - 2, x - 1));
                        findAHop(this.getNode(y - 2, x - 1));
                    }
@@ -110,7 +110,7 @@ public class Board {
 
             try {
             if (!this.getNode(y + 1, x - 1).getColor().equals("WHITE")) {
-                if(this.getNode(y + 2, x - 1).getColor().equals("WHITE")) {
+                if(this.getNode(y + 2, x - 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y + 2, x - 1))) {
                     highlightField(this.getNode(y + 2, x - 1));
                         findAHop(this.getNode(y + 2, x - 1));
                     }
@@ -119,7 +119,7 @@ public class Board {
 
             try {
                 if (!this.getNode(y - 1, x).getColor().equals("WHITE")) {
-                if (this.getNode(y - 2, x + 1).getColor().equals("WHITE")) {
+                if (this.getNode(y - 2, x + 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y - 2, x + 1))) {
                     highlightField(this.getNode(y - 2, x + 1));
                         findAHop(this.getNode(y - 2, x + 1));
                     }
@@ -128,7 +128,7 @@ public class Board {
 
             try {
             if (!this.getNode(y + 1, x).getColor().equals("WHITE")) {
-                if (this.getNode(y + 2, x + 1).getColor().equals("WHITE")) {
+                if (this.getNode(y + 2, x + 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y + 2, x + 1))) {
                     highlightField(this.getNode(y + 2, x + 1));
                         findAHop(this.getNode(y + 2, x + 1));
                     }
@@ -139,7 +139,7 @@ public class Board {
 
             try {
             if (!this.getNode(y + 1, x + 1).getColor().equals("WHITE")) {
-                if (this.getNode(y + 2, x + 1).getColor().equals("WHITE")) {
+                if (this.getNode(y + 2, x + 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y + 2, x + 1))) {
                     highlightField(this.getNode(y + 2, x + 1));
                         findAHop(this.getNode(y + 2, x + 1));
                     }
@@ -148,7 +148,7 @@ public class Board {
 
             try {
             if (!this.getNode(y - 1, x + 1).getColor().equals("WHITE")) {
-                if (this.getNode(y - 2, x + 1).getColor().equals("WHITE")) {
+                if (this.getNode(y - 2, x + 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y - 2, x + 1))) {
                     highlightField(this.getNode(y - 2, x + 1));
                         findAHop(this.getNode(y - 2, x + 1));
                     }
@@ -157,7 +157,7 @@ public class Board {
 
             try {
             if (!this.getNode(y - 1, x).getColor().equals("WHITE")) {
-                if (this.getNode(y - 2, x - 1).getColor().equals("WHITE")) {
+                if (this.getNode(y - 2, x - 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y - 2, x - 1))) {
                     highlightField(this.getNode(y - 2, x - 1));
                         findAHop(this.getNode(y - 2, x - 1));
                     }
@@ -166,7 +166,7 @@ public class Board {
 
             try {
             if (!this.getNode(y + 1, x).getColor().equals("WHITE")) {
-                if(this.getNode(y + 2, x - 1).getColor().equals("WHITE")) {
+                if(this.getNode(y + 2, x - 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y + 2, x - 1))) {
                     highlightField(this.getNode(y + 2, x - 1));
                         findAHop(this.getNode(y + 2, x - 1));
                     }
@@ -177,7 +177,7 @@ public class Board {
 
         try {
         if (!this.getNode(y, x - 1).getColor().equals("WHITE")) {
-            if(this.getNode(y, x - 2).getColor().equals("WHITE")) {
+            if(this.getNode(y, x - 2).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y, x - 2))) {
                 highlightField(this.getNode(y, x - 2));
                 findAHop(this.getNode(y, x - 2));
             }
@@ -186,7 +186,7 @@ public class Board {
 
         try {
         if (!this.getNode(y, x + 1).getColor().equals("WHITE")) {
-            if(this.getNode(y, x + 2).getColor().equals("WHITE")) {
+            if(this.getNode(y, x + 2).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y, x + 2))) {
                     highlightField(this.getNode(y, x + 2));
                     findAHop(this.getNode(y, x + 2));
                 }
