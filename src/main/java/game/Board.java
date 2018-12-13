@@ -1,6 +1,7 @@
 package game;
 
 import javafx.scene.paint.Paint;
+
 import java.util.ArrayList;
 
 public class Board {
@@ -98,84 +99,50 @@ public class Board {
 
     private void findAHop(Field field) {
         int y = field.getYCord(), x = field.getXCord();
+        int sign;
 
         if (y % 2 == 1) {
-
-            try {
-            if (!this.getNode(y - 1, x - 1).getColor().equals("WHITE")) {
-               if(this.getNode(y - 2, x - 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y - 2, x - 1))) {
-                   highlightField(this.getNode(y - 2, x - 1));
-                       findAHop(this.getNode(y - 2, x - 1));
-                   }
-                }
-            } catch (NullPointerException exc) {}
-
-            try {
-            if (!this.getNode(y + 1, x - 1).getColor().equals("WHITE")) {
-                if(this.getNode(y + 2, x - 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y + 2, x - 1))) {
-                    highlightField(this.getNode(y + 2, x - 1));
-                        findAHop(this.getNode(y + 2, x - 1));
-                    }
-                }
-            } catch (NullPointerException exc) {}
-
-            try {
-                if (!this.getNode(y - 1, x).getColor().equals("WHITE")) {
-                if (this.getNode(y - 2, x + 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y - 2, x + 1))) {
-                    highlightField(this.getNode(y - 2, x + 1));
-                        findAHop(this.getNode(y - 2, x + 1));
-                    }
-                }
-            } catch (NullPointerException exc) {}
-
-            try {
-            if (!this.getNode(y + 1, x).getColor().equals("WHITE")) {
-                if (this.getNode(y + 2, x + 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y + 2, x + 1))) {
-                    highlightField(this.getNode(y + 2, x + 1));
-                        findAHop(this.getNode(y + 2, x + 1));
-                    }
-                }
-            } catch (NullPointerException exc) {}
-
-        } else {
-
-            try {
-            if (!this.getNode(y + 1, x + 1).getColor().equals("WHITE")) {
-                if (this.getNode(y + 2, x + 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y + 2, x + 1))) {
-                    highlightField(this.getNode(y + 2, x + 1));
-                        findAHop(this.getNode(y + 2, x + 1));
-                    }
-                }
-            } catch (NullPointerException exc) {}
-
-            try {
-            if (!this.getNode(y - 1, x + 1).getColor().equals("WHITE")) {
-                if (this.getNode(y - 2, x + 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y - 2, x + 1))) {
-                    highlightField(this.getNode(y - 2, x + 1));
-                        findAHop(this.getNode(y - 2, x + 1));
-                    }
-                }
-            } catch (NullPointerException exc) {}
-
-            try {
-            if (!this.getNode(y - 1, x).getColor().equals("WHITE")) {
-                if (this.getNode(y - 2, x - 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y - 2, x - 1))) {
-                    highlightField(this.getNode(y - 2, x - 1));
-                        findAHop(this.getNode(y - 2, x - 1));
-                    }
-                }
-            } catch (NullPointerException exc) {}
-
-            try {
-            if (!this.getNode(y + 1, x).getColor().equals("WHITE")) {
-                if(this.getNode(y + 2, x - 1).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y + 2, x - 1))) {
-                    highlightField(this.getNode(y + 2, x - 1));
-                        findAHop(this.getNode(y + 2, x - 1));
-                    }
-                }
-            } catch (NullPointerException exc) {}
-
+            sign = -1;
         }
+        else {
+            sign = 1;
+        }
+
+        try {
+            if (!this.getNode(y + 1*sign, x + 1*sign).getColor().equals("WHITE")) {
+                if (this.getNode(y + 2*sign, x + 1*sign).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y + 2*sign, x + 1*sign))) {
+                    highlightField(this.getNode(y + 2*sign, x + 1*sign));
+                    findAHop(this.getNode(y + 2*sign, x + 1*sign));
+                }
+            }
+        } catch (NullPointerException exc) {}
+
+        try {
+            if (!this.getNode(y + (-1*sign), x + 1*sign).getColor().equals("WHITE")) {
+                if(this.getNode(y + (-2*sign), x + 1*sign).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y + (-2*sign), x + 1*sign))) {
+                    highlightField(this.getNode(y + (-2*sign), x + 1*sign));
+                    findAHop(this.getNode(y + (-2*sign), x + 1*sign));
+                }
+            }
+        } catch (NullPointerException exc) {}
+
+        try {
+            if (!this.getNode(y - 1, x).getColor().equals("WHITE")) {
+                if (this.getNode(y - 2, x + (-1*sign)).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y - 2, x + (-1*sign)))) {
+                    highlightField(this.getNode(y - 2, x + (-1*sign)));
+                    findAHop(this.getNode(y - 2, x + (-1*sign)));
+                }
+            }
+        } catch (NullPointerException exc) {}
+
+        try {
+            if (!this.getNode(y + 1, x).getColor().equals("WHITE")) {
+                if (this.getNode(y + 2, x + (-1*sign)).getColor().equals("WHITE") && !highlighted.contains(this.getNode(y + 2, x + (-1*sign)))) {
+                    highlightField(this.getNode(y + 2, x + (-1*sign)));
+                    findAHop(this.getNode(y + 2, x + (-1*sign)));
+                }
+            }
+        } catch (NullPointerException exc) {}
 
         try {
         if (!this.getNode(y, x - 1).getColor().equals("WHITE")) {

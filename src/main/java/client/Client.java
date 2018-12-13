@@ -43,8 +43,10 @@ public class Client extends Application {
                 }
                 else {
                     board.flushHighlighted();
-                    board.selected = ((Field) evt.getPickResult().getIntersectedNode());
-                    board.highlightLegalMoves(board.selected);
+                    if (!((Field) evt.getPickResult().getIntersectedNode()).getColor().equals("WHITE")) {
+                        board.selected = ((Field) evt.getPickResult().getIntersectedNode());
+                        board.highlightLegalMoves(board.selected);
+                    }
                 }
 
             } catch (NullPointerException exc) {
