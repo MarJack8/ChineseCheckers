@@ -63,7 +63,9 @@ public class GameMaster {
 		else server.setSoTimeout( 0 );
 		if( game_started ) {
 			System.out.println( "Game successfully started" );
-			sendToAll( new CCMessage( "start_success" ) );
+			CCMessage msg = new CCMessage( "start_success" );
+			msg.insertArg( getPlayerCount() );
+			sendToAll( msg );
 		}
 		
 		return game_started;
@@ -186,6 +188,14 @@ public class GameMaster {
 	public void haltPlayer( int i ) throws NullPointerException {
 		players[i].halt();
 	}
+	
+	public void setWin( int i ) {
+		players[i].setWin();
+	}
+	
+	public boolean getWin( int i ) {
+		return players[i].getWin();
+	}
 
 	public void start() throws ContinueException, IOException {
 		game_started = true;
@@ -194,8 +204,13 @@ public class GameMaster {
 		out.println( "start" );
 		out.close();
 		dummy.close();
+	}
+
+	public boolean gameFinished() {
+		int win = 0;
 		for( int i = 0; i<playerCount; i++ ) {
-			
+			if( getWin( i ) ) win++;
 		}
+		return win >= getPlayerCount()-1;
 	}
 }

@@ -65,22 +65,6 @@ public class Connection {
 	}
 	
 	/**
-	 * Attempt to move pawn.
-	 * 
-	 * @param from
-	 * @param to
-	 * @return CCMessage in {move_success, move_illegal}
-	 * @throws IOException 
-	 */
-	public CCMessage makeMove( int from, int to ) throws IOException {
-		CCMessage mm = new CCMessage( "move" );
-		mm.insertArg( from );
-		mm.insertArg( to );
-		out.println( mm.toString() );
-		return CCMessage.fromString( in.readLine() );
-	}
-	
-	/**
 	 * Send given CCMessage to server.
 	 * Only administrator should use this method. To send "leave" just use close method.
 	 * (If other messages are sent by non-administrator, result will be "refuse").
