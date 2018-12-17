@@ -7,12 +7,10 @@ import game.FieldColor;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
-import jdk.nashorn.internal.objects.NativeUint8Array;
 
 public class Client extends Application {
 
@@ -22,8 +20,8 @@ public class Client extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        final int DISPLAY_WIDTH = 1000, DISPLAY_HEIGHT = 1000;
-        final double RADIUS = 25.0;
+        final double DISPLAY_HEIGHT = Screen.getPrimary().getVisualBounds().getHeight()*0.95, DISPLAY_WIDTH = DISPLAY_HEIGHT;
+        final double RADIUS = 0.025*DISPLAY_HEIGHT;
 
         primaryStage.setTitle("Chinese Checkers");
 
@@ -45,8 +43,10 @@ public class Client extends Application {
                 }
                 else {
                     board.flushHighlighted();
-                    board.selected = ((Field) evt.getPickResult().getIntersectedNode());
-                    board.highlightLegalMoves(board.selected);
+                    if (!((Field) evt.getPickResult().getIntersectedNode()).getColor().equals("WHITE")) {
+                        board.selected = ((Field) evt.getPickResult().getIntersectedNode());
+                        board.highlightLegalMoves(board.selected);
+                    }
                 }
 
             } catch (NullPointerException exc) {

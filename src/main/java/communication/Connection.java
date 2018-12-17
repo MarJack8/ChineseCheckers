@@ -46,7 +46,7 @@ public class Connection {
 	}
 	
 	/**
-	 * Wait for messages from server.
+	 * Wait for message from server.
 	 * 
 	 * @return CCMessage, see doc about exact messages
 	 * @throws SocketException
@@ -74,9 +74,14 @@ public class Connection {
 	 * @throws IOException
 	 */
 	public CCMessage sendCommand( CCMessage command ) throws IOException {
-		//socket.setSoTimeout( 2000 );
+		socket.setSoTimeout( 5000 );
 		out.println( command.toString() );
-		return CCMessage.fromString( in.readLine() );
+		try {
+			return CCMessage.fromString( in.readLine() );
+		}
+		catch( Exception e ) {
+			return new CCMessage( "timeout" );
+		}
 	}
 	
 	/**

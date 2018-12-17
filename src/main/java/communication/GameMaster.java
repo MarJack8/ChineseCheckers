@@ -63,6 +63,12 @@ public class GameMaster {
 		else server.setSoTimeout( 0 );
 		if( game_started ) {
 			System.out.println( "Game successfully started" );
+			for( int i = 0; i<playerCount; i++ ) {
+				if( !players[i].isAlive() ) System.out.println( "Error: #" + i + " dead!!!" );
+			}
+			for( int i = 0; i<playerCount; i++ ) {
+				if( !players[i].isAlive() ) System.out.println( "Error: #" + i + " dead!!!" );
+			}
 			CCMessage msg = new CCMessage( "start_success" );
 			msg.insertArg( getPlayerCount() );
 			sendToAll( msg );
