@@ -1,6 +1,7 @@
 package client;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import communication.CCMessage;
@@ -9,6 +10,22 @@ import game.Board;
 import game.Field;
 
 public class XConnection extends Connection {
+	
+	int id;
+	CCMessage conmsg;
+	
+	public void xconnect( String ip, int port ) throws UnknownHostException, IOException {
+		conmsg = connect( ip, port );
+		id = conmsg.getArg( 0 );
+	}
+	
+	public CCMessage getConnectionMessage() {
+		return conmsg;
+	}
+	
+	public int getId() {
+		return id;
+	}
 	
 	/**
 	 * Request to select given field.
