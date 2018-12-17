@@ -50,13 +50,32 @@ public class Board {
     public Field selected;
     private ArrayList<Field> highlighted;
 
-    public Board() {
+    public Board(int playersNum) {
+        int[][] pNums = {
+                {0},
+                {0},
+                {1, 4},
+                {1, 2, 6},
+                {2, 3, 5, 6},
+                {0},
+                {1, 2, 3, 4, 5, 6}
+        };
+
         board = new Field[HEIGHT][WIDTH];
         highlighted = new ArrayList<>();
         for (int y = 0; y < board.length; ++y) {
             for (int x = 0; x < board[0].length; ++x) {
-                if (START_BOARD[y][x] != -1) {
-                    board[y][x] = new Field(START_BOARD[y][x], y, x);
+                if (START_BOARD[y][x] == 0){
+                    board[y][x] = new Field(0, y, x);
+                }
+                else if (START_BOARD[y][x] != -1) {
+                    for (int i = 0; i < pNums[playersNum].length; ++i) {
+                        if (START_BOARD[y][x] == pNums[playersNum][i]) {
+                            board[y][x] = new Field(i+1, y, x);
+                            break;
+                        }
+                        board[y][x] = new Field(0, y, x);
+                    }
                 } else {
                     board[y][x] = Field.getNullField();
                 }
@@ -82,6 +101,13 @@ public class Board {
         highlighted.clear();
     }
 
+    public ArrayList<Field> getLegal(Field field) {
+        this.flushHighlighted();
+        this.highlightLegalMoves(field);
+
+        return highlighted;
+    }
+
     public void changeFieldColor(Field field, FieldColor color) {
         if (field.getXCord() != -1) {
             this.getNode(field.getYCord(), field.getXCord()).setColor(color);
@@ -93,7 +119,7 @@ public class Board {
         if (field.getXCord() != -1 && field.getColor().equals("WHITE") && !(highlighted.contains(field))) {
             highlighted.add(field);
             this.getNode(field.getYCord(), field.getXCord()).setStroke(Paint.valueOf(FieldColor.LEGAL.getColor()));
-            this.getNode(field.getYCord(), field.getXCord()).setFill(Paint.valueOf("MAGENTA"));
+            this.getNode(field.getYCord(), field.getXCord()).setFill(Paint.valueOf(FieldColor.LEGAL.getColor()));
         }
     }
 
