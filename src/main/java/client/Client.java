@@ -16,8 +16,10 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class Client extends Application {
+import java.io.IOException;
+import java.net.UnknownHostException;
 
+public class Client extends Application {
     public static void main(String[] args) {
         launch(args);
     }
@@ -39,14 +41,28 @@ public class Client extends Application {
         menu.setVgap(10);
         root.getChildren().add(menu);
 
+        Circle clientColor = new Circle(RADIUS/2);
+        clientColor.setFill(Paint.valueOf("WHITE"));
+
+        XConnection xcon = new XConnection();
+
         Button joinGame = new Button("Dołącz do gry");
         joinGame.setOnAction(event -> {
-            System.out.println("Co tu wpisać? :D");
+            try {
+                xcon.xconnect("127.0.0.1", 8060);
+
+                if (xcon.getConnectionMessage().equals("joined")) {
+                }
+                else if (xcon.getConnectionMessage().equals("created")) {
+                }
+
+                clientColor.setFill(Paint.valueOf(FieldColor.values()[xcon.getId()].getColor()));
+            } catch (UnknownHostException exc) {}
+              catch (IOException exc) {}
         });
 
         Button pas = new Button("Pas");
-        joinGame.setOnAction(event -> {
-            System.out.println("Co tu wpisać? :D");
+        pas.setOnAction(event -> {
         });
 
         menu.add(joinGame, 0, 0);
@@ -56,12 +72,9 @@ public class Client extends Application {
         Label yourColor = new Label("Twój kolor:");
         menu.add(yourColor, 0, 2);
 
-        Circle clientColor = new Circle(RADIUS/2);
-        clientColor.setFill(Paint.valueOf("RED"));
-
         menu.add(clientColor, 1, 2);
 
-        Board board = new Board(6);
+        Board board = new Board(0);
 
         s.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
             try {

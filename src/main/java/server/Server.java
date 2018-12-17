@@ -1,15 +1,14 @@
 package server;
 
-import static org.junit.jupiter.api.Assumptions.assumingThat;
+import communication.CCMessage;
+import communication.GameMaster;
+import game.Board;
+import game.Field;
+import game.FieldColor;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-
-import communication.*;
-import game.Board;
-import game.Field;
-import game.FieldColor;
 
 public class Server {
 	
