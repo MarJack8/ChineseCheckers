@@ -23,6 +23,10 @@ public class CCMessage {
 		return args;
 	}
 	
+	public int getArg( int x ) {
+		return args.get( x );
+	}
+	
 	public String toString() {
 		String ret = signal;
 		for( Integer i: args ) {

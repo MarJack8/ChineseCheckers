@@ -7,7 +7,10 @@ public abstract class Player extends Thread {
 	public final int id;
 	public GameMaster gm;
 	
+	public boolean win;
+	
 	Player( int _id ) {
+		win = false;
 		id = _id;
 	}
 	
@@ -18,6 +21,14 @@ public abstract class Player extends Thread {
 	abstract public void permit();
 	abstract public CCMessage recv();
 	abstract public void halt();
+	
+	public void setWin() {
+		win = true;
+	}
+	
+	public boolean getWin() {
+		return win;
+	}
 	
 	abstract public void close() throws IOException;
 	

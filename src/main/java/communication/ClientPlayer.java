@@ -44,7 +44,7 @@ public class ClientPlayer extends Player {
 		CCMessage res;
 		if( id == 0 ) res = new CCMessage( "created" );
 		else res = new CCMessage( "joined" );
-		res.insertArg( id );
+		res.insertArg( id+1 );
 		send( res );
 		while( !gm.game_cancelled ) {
 			try {
@@ -58,8 +58,14 @@ public class ClientPlayer extends Player {
 					}
 					if( id == 0 ) { // Administrator
 						if( msg.getSignal().equals( "start" ) ) { // Start
-							System.out.println( "Starting game" );
-							gm.start();
+							if( gm.getPlayerCount() == 1 || gm.getPlayerCount() == 5 ) {
+								System.out.println( "Attempt to start game failed due to incorrect player count" );
+								send( new CCMessage( "failure" ) );
+							}
+							else {
+								System.out.println( "Starting game" );
+								gm.start();
+							}
 						}
 					}
 				}
