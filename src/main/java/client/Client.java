@@ -46,6 +46,10 @@ public class Client extends Application {
 
         XConnection xcon = new XConnection();
 
+        primaryStage.setOnCloseRequest(event -> {
+            xcon.close();
+        });
+
         Button joinGame = new Button("Dołącz do gry");
         joinGame.setOnAction(event -> {
             try {
@@ -63,6 +67,9 @@ public class Client extends Application {
 
         Button pas = new Button("Pas");
         pas.setOnAction(event -> {
+            try {
+                xcon.xpass();
+            } catch (IOException exc) {}
         });
 
         menu.add(joinGame, 0, 0);
@@ -74,7 +81,15 @@ public class Client extends Application {
 
         menu.add(clientColor, 1, 2);
 
-        Board board = new Board(0);
+        Button exit = new Button("Wyjdź");
+        exit.setOnAction(evt -> {
+            xcon.close();
+            primaryStage.close();
+        });
+
+        menu.add(exit, 0, 4);
+
+        Board board = new Board(3);
 
         s.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
             try {
