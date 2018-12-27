@@ -20,7 +20,7 @@ public class Server {
 		System.out.println( "Starting at " + port );
 		GameMaster gm = new GameMaster( port );
 		if( gm.waitForClients() ) {
-			// In this point already server sent "start_success" to all players
+			// In this point server has already sent "start_success" to all players
 			Board board = new Board( gm.getPlayerCount() );
 			for( int currentPlayer = (new Random()).nextInt( gm.getPlayerCount() ); !gm.gameFinished(); currentPlayer = ( currentPlayer + 1 ) % gm.getPlayerCount() ) {
 				if( !gm.getWin( currentPlayer ) ) {
@@ -49,6 +49,7 @@ public class Server {
 									sm.insertArg( f.getYCord() );
 									sm.insertArg( f.getXCord() );
 								}
+								System.out.println( "Accepted #" + currentPlayer + " selection. There are " + legal.size() + " moves" );
 								gm.sendToPlayer( currentPlayer, sm );
 							}
 							else {
@@ -68,6 +69,7 @@ public class Server {
 									sm.insertArg( destination.getXCord() );
 									sm.insertArg( currentPlayer + 1 );
 									gm.sendToAll( sm );
+									System.out.println( "#" + currentPlayer + " moved from (" + selected.getYCord() + "," + selected.getXCord() + ") to (" + destination.getYCord() + "," + destination.getXCord() + ")" );
 									destination.setColor( FieldColor.values()[ currentPlayer + 1 ] );
 									selected.setColor( FieldColor.NO_PLAYER );
 									break;

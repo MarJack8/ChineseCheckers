@@ -45,7 +45,8 @@ public class XConnection extends Connection {
 			ArrayList<Field> ret = new ArrayList<Field>();
 			int o = 0;
 			int iy = 0;
-			for( int i: sm.getArgs() ) {
+			ArrayList<Integer> args = sm.getArgs();
+			for( Integer i: args ) {
 				if( o == 0 ) {
 					iy = i;
 					o++;
