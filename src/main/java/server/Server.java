@@ -65,6 +65,8 @@ public class Server {
 								sm.insertArg( destination.getYCord() );
 								sm.insertArg( destination.getXCord() );
 								gm.sendToAll( sm );
+								destination.setColor( FieldColor.values()[ currentPlayer + 1 ] );
+								selected.setColor( FieldColor.NO_PLAYER );
 								break;
 							}
 						}
