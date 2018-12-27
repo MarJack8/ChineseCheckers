@@ -128,8 +128,9 @@ public class Board {
     }
 
     public void highlight() {
-        for (Field f: highlighted) {
-            highlightField(f);
+        for (Field field: highlighted) {
+            this.getNode(field.getYCord(), field.getXCord()).setStroke(Paint.valueOf(FieldColor.LEGAL.getColor()));
+            this.getNode(field.getYCord(), field.getXCord()).setFill(Paint.valueOf(FieldColor.LEGAL.getColor()));
         }
     }
 

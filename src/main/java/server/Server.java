@@ -35,6 +35,7 @@ public class Server {
 					while( true ) {
 						CCMessage pm = gm.recvFromPlayer( currentPlayer );
 						if( pm.getSignal().equals( "pass" ) ) {
+                            System.out.println("Uwaga pass");
 							gm.sendToPlayer( currentPlayer, new CCMessage( "success" ) );
 							System.out.println( "#" + currentPlayer + " passed" );
 							break;

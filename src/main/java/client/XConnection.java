@@ -83,7 +83,7 @@ public class XConnection extends Connection {
 	 */
 	public boolean xpass() throws IOException {
 		CCMessage sm = sendCommand( new CCMessage( "pass" ) );
-		return sm.getSignal() == "success";
+		return sm.getSignal().equals("success");
 	}
 
 	/**

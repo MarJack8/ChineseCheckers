@@ -39,6 +39,10 @@ public class Client extends Application {
         if (msg.getSignal().equals("your_turn")) {
 
         } else if (msg.getSignal().equals("move")) {
+            Field[] fld = xcon.xgetMove(msg, board);
+            FieldColor clr = xcon.xgetColor(msg);
+            board.changeFieldColor(fld[1], clr);
+            board.changeFieldColor(fld[0], FieldColor.NO_PLAYER);
         }
     }
 
@@ -172,10 +176,8 @@ public class Client extends Application {
             try {
                 if (evt.getPickResult().getIntersectedNode() instanceof Field) {
                     if (board.isLegal((Field) evt.getPickResult().getIntersectedNode())) {
-                       /* board.changeFieldColor((Field) evt.getPickResult().getIntersectedNode(), board.selected.getFieldColor());
-                        board.changeFieldColor(board.selected, FieldColor.NO_PLAYER);
-                        board.flushHighlighted();*/
                        if (xcon.xmove(((Field) evt.getPickResult().getIntersectedNode()).getYCord(),((Field) evt.getPickResult().getIntersectedNode()).getXCord())) {
+                           board.flushHighlighted();
                            waitForSignal();
                        }
                     } else {
