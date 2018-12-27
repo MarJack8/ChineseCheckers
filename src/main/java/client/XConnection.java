@@ -4,6 +4,7 @@ import communication.CCMessage;
 import communication.Connection;
 import game.Board;
 import game.Field;
+import game.FieldColor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -95,6 +96,10 @@ public class XConnection extends Connection {
 		ret[0] = board.getNode( msg.getArgs().get( 0 ) , msg.getArgs().get( 1 ) );
 		ret[1] = board.getNode( msg.getArgs().get( 2 ) , msg.getArgs().get( 3 ) );
 		return ret;
+	}
+	
+	public FieldColor xgetColor( CCMessage msg ) {
+		return FieldColor.values()[msg.getArg( 4 )];
 	}
 	
 	/**
