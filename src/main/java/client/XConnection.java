@@ -67,7 +67,7 @@ public class XConnection extends Connection {
 	 * @throws IOException on connection loss
 	 */
 	public boolean xmove( int y, int x ) throws IOException {
-		CCMessage cm = new CCMessage( "select" );
+		CCMessage cm = new CCMessage( "move" );
 		cm.insertArg( y );
 		cm.insertArg( x );
 		CCMessage sm = sendCommand( cm );
