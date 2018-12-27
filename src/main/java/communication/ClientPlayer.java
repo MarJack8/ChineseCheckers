@@ -114,7 +114,12 @@ public class ClientPlayer extends Player {
 	@Override
 	public CCMessage recv() {
 		if( !permitted ) return new CCMessage( "not_permitted" );
-		while( received.isEmpty() );
+		while( received.isEmpty() )
+			try {
+				Thread.sleep( 100 );
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			};
 		return received.poll();
 	}
 	
