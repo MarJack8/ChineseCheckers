@@ -1,20 +1,19 @@
 package client;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-
 import communication.CCMessage;
 import communication.Connection;
 import game.Board;
 import game.Field;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class XConnection extends Connection {
 	
 	int id;
 	CCMessage conmsg;
 	
-	public void xconnect( String ip, int port ) throws UnknownHostException, IOException {
+	public void xconnect( String ip, int port ) throws IOException {
 		conmsg = connect( ip, port );
 		id = conmsg.getArg( 0 );
 	}
@@ -57,7 +56,7 @@ public class XConnection extends Connection {
 			}
 			return ret;
 		}
-		return null;
+		return new ArrayList<Field>();
 	}
 	
 	/**
@@ -72,8 +71,7 @@ public class XConnection extends Connection {
 		cm.insertArg( y );
 		cm.insertArg( x );
 		CCMessage sm = sendCommand( cm );
-		if( sm.getSignal() == "success" ) return true;
-		else return false;
+		return sm.getSignal() == "success";
 	}
 	
 	/**
@@ -83,8 +81,7 @@ public class XConnection extends Connection {
 	 */
 	public boolean xpass() throws IOException {
 		CCMessage sm = sendCommand( new CCMessage( "pass" ) );
-		if( sm.getSignal() == "success" ) return true;
-		else return false;
+		return sm.getSignal() == "success";
 	}
 	
 	/**

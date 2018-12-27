@@ -1,5 +1,6 @@
 package client;
 
+import communication.CCMessage;
 import game.Board;
 import game.Field;
 import game.FieldColor;
@@ -20,6 +21,27 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 public class Client extends Application {
+    Board board;
+    boolean gameOn = false;
+    XConnection xcon;
+    CCMessage msg;
+
+    private void setBoard(int playersNum) {
+        if (playersNum != 0) {
+            gameOn = true;
+        }
+        this.board = new Board(playersNum);
+    }
+
+    private void waitForSignal() {
+        msg = xcon.recvSignal();
+
+        if (msg.getSignal().equals("your_turn")) {
+
+        } else if (msg.getSignal().equals("move")) {
+        }
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -34,82 +56,7 @@ public class Client extends Application {
         Group root = new Group();
         Scene s = new Scene(root, DISPLAY_WIDTH + 190, DISPLAY_HEIGHT);
 
-        GridPane menu = new GridPane();
-        menu.setMinWidth(140);
-        menu.setMinHeight(DISPLAY_HEIGHT);
-        menu.setStyle("-fx-border-color: black ; -fx-padding: 10 ;");
-        menu.setVgap(10);
-        root.getChildren().add(menu);
-
-        Circle clientColor = new Circle(RADIUS/2);
-        clientColor.setFill(Paint.valueOf("WHITE"));
-
-        XConnection xcon = new XConnection();
-
-        primaryStage.setOnCloseRequest(event -> {
-            xcon.close();
-        });
-
-        Button joinGame = new Button("Dołącz do gry");
-        joinGame.setOnAction(event -> {
-            try {
-                xcon.xconnect("127.0.0.1", 8060);
-
-                if (xcon.getConnectionMessage().equals("joined")) {
-                }
-                else if (xcon.getConnectionMessage().equals("created")) {
-                }
-
-                clientColor.setFill(Paint.valueOf(FieldColor.values()[xcon.getId()].getColor()));
-            } catch (UnknownHostException exc) {}
-              catch (IOException exc) {}
-        });
-
-        Button pas = new Button("Pas");
-        pas.setOnAction(event -> {
-            try {
-                xcon.xpass();
-            } catch (IOException exc) {}
-        });
-
-        menu.add(joinGame, 0, 0);
-        menu.add(pas, 0, 1);
-        menu.setAlignment(Pos.TOP_CENTER);
-
-        Label yourColor = new Label("Twój kolor:");
-        menu.add(yourColor, 0, 2);
-
-        menu.add(clientColor, 1, 2);
-
-        Button exit = new Button("Wyjdź");
-        exit.setOnAction(evt -> {
-            xcon.close();
-            primaryStage.close();
-        });
-
-        menu.add(exit, 0, 4);
-
-        Board board = new Board(3);
-
-        s.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
-            try {
-                if (evt.getPickResult().getIntersectedNode() instanceof Field) {
-                    if (board.isLegal((Field) evt.getPickResult().getIntersectedNode())) {
-                        board.changeFieldColor((Field) evt.getPickResult().getIntersectedNode(), board.selected.getFieldColor());
-                        board.changeFieldColor(board.selected, FieldColor.NO_PLAYER);
-                        board.flushHighlighted();
-                    } else {
-                        board.flushHighlighted();
-                        if (!((Field) evt.getPickResult().getIntersectedNode()).getColor().equals("WHITE")) {
-                            board.selected = ((Field) evt.getPickResult().getIntersectedNode());
-                            board.highlightLegalMoves(board.selected);
-                        }
-                    }
-                }
-            } catch (NullPointerException exc) {
-                System.out.println("No Field clicked.");
-            }
-        });
+        setBoard(0);
 
         for (int y = 0; y < board.HEIGHT; ++y) {
             for (int x = 0; x < board.WIDTH; ++x) {
@@ -120,6 +67,127 @@ public class Client extends Application {
                 root.getChildren().add(board.getNode(y, x));
             }
         }
+
+        GridPane menu = new GridPane();
+        menu.setMinWidth(140);
+        menu.setMinHeight(DISPLAY_HEIGHT);
+        menu.setStyle("-fx-border-color: black ; -fx-padding: 10 ;");
+        menu.setVgap(10);
+        root.getChildren().add(menu);
+
+        Circle clientColor = new Circle(RADIUS/2);
+        clientColor.setFill(Paint.valueOf("WHITE"));
+
+        xcon = new XConnection();
+
+        primaryStage.setOnCloseRequest(event -> {
+            xcon.close();
+        });
+
+        Button joinGame = new Button("Dołącz do gry");
+
+        Button pas = new Button("Pas");
+        pas.setOnAction(event -> {
+            try {
+                if (xcon.xpass()) {
+                    waitForSignal();
+                }
+            } catch (IOException exc) {}
+        });
+
+        Button startGame = new Button("Start");
+
+        startGame.setOnAction(evt -> {
+            try {
+                setBoard(xcon.xstart());
+
+                for (int y = 0; y < board.HEIGHT; ++y) {
+                    for (int x = 0; x < board.WIDTH; ++x) {
+                        board.getNode(y, x).setCenterY(DISPLAY_HEIGHT*(y)/(board.HEIGHT-1));
+                        board.getNode(y, x).setCenterX(DISPLAY_WIDTH*((x+1-0.5*(y%2))+2)/board.WIDTH);
+                        board.getNode(y, x).setRadius(RADIUS);
+                        board.getNode(y, x).setFill(Paint.valueOf(board.getNode(y, x).getColor()));
+                        root.getChildren().add(board.getNode(y, x));
+                    }
+                }
+
+                waitForSignal();
+            } catch (IOException exc) {}
+
+        });
+
+        Button addBot = new Button("Dodaj bota");
+
+        addBot.setOnAction(evt -> {
+            try {
+                xcon.xaddBot();
+            } catch (IOException exc) {}
+        });
+
+        menu.add(joinGame, 0, 1);
+        menu.add(pas, 0, 2);
+        menu.setAlignment(Pos.TOP_CENTER);
+
+        Label yourColor = new Label("Twój kolor:");
+        menu.add(yourColor, 0, 3);
+        menu.add(clientColor, 1, 3);
+
+        Button exit = new Button("Wyjdź");
+        exit.setOnAction(evt -> {
+            xcon.close();
+            primaryStage.close();
+        });
+
+        menu.add(exit, 0, 4);
+
+        joinGame.setOnAction(event -> {
+            try {
+                xcon.xconnect("127.0.0.1", 8060);
+
+                clientColor.setFill(Paint.valueOf(FieldColor.values()[xcon.getId()].getColor()));
+
+                if (xcon.getConnectionMessage().getSignal().equals("joined")) {
+                    setBoard(xcon.xwaitForGameStart());
+                    for (int y = 0; y < board.HEIGHT; ++y) {
+                        for (int x = 0; x < board.WIDTH; ++x) {
+                            board.getNode(y, x).setCenterY(DISPLAY_HEIGHT*(y)/(board.HEIGHT-1));
+                            board.getNode(y, x).setCenterX(DISPLAY_WIDTH*((x+1-0.5*(y%2))+2)/board.WIDTH);
+                            board.getNode(y, x).setRadius(RADIUS);
+                            board.getNode(y, x).setFill(Paint.valueOf(board.getNode(y, x).getColor()));
+                            root.getChildren().add(board.getNode(y, x));
+                        }
+
+                    }
+                   waitForSignal();
+                }
+                else if (xcon.getConnectionMessage().getSignal().equals("created")) {
+                    menu.add(startGame, 0, 5);
+                    menu.add(addBot, 0, 6);
+                }
+            } catch (UnknownHostException exc) {}
+            catch (IOException exc) {}
+        });
+
+        s.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
+            try {
+                if (evt.getPickResult().getIntersectedNode() instanceof Field) {
+                    if (board.isLegal((Field) evt.getPickResult().getIntersectedNode())) {
+                       /* board.changeFieldColor((Field) evt.getPickResult().getIntersectedNode(), board.selected.getFieldColor());
+                        board.changeFieldColor(board.selected, FieldColor.NO_PLAYER);
+                        board.flushHighlighted();*/
+                       if (xcon.xmove(((Field) evt.getPickResult().getIntersectedNode()).getYCord(),((Field) evt.getPickResult().getIntersectedNode()).getXCord())) {
+                           waitForSignal();
+                       }
+                    } else {
+                        board.flushHighlighted();
+                        board.setHighlighted(xcon.xselect(((Field) evt.getPickResult().getIntersectedNode()).getYCord(), ((Field) evt.getPickResult().getIntersectedNode()).getXCord(), board));
+                        board.highlight();
+                    }
+                }
+            } catch (NullPointerException exc) {
+                System.out.println("No Field clicked.");
+            } catch (IOException exc) {}
+        });
 
         primaryStage.setScene(s);
         primaryStage.show();

@@ -123,6 +123,16 @@ public class Board {
         }
     }
 
+    public void setHighlighted(ArrayList<Field> hgh) {
+        this.highlighted = hgh;
+    }
+
+    public void highlight() {
+        for (Field f: highlighted) {
+            highlightField(f);
+        }
+    }
+
     private void findAHop(Field field) {
         int y = field.getYCord(), x = field.getXCord();
         int sign;
