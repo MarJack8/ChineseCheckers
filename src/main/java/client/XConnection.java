@@ -98,6 +98,11 @@ public class XConnection extends Connection {
 		return ret;
 	}
 	
+	/**
+	 * Translates CCMessage "move" to FieldColor.
+	 * @param msg
+	 * @return FieldColor
+	 */
 	public FieldColor xgetColor( CCMessage msg ) {
 		return FieldColor.values()[msg.getArg( 4 )];
 	}

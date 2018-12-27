@@ -82,6 +82,7 @@ public class Server {
 					}
 					gm.haltPlayer( currentPlayer );
 					
+					// TODO
 					if( false /*currentPlayer has won*/ ) {
 						gm.sendToPlayer( currentPlayer, new CCMessage( "victory" ) );
 						gm.setWin( currentPlayer );
