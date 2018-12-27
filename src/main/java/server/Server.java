@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Server {
-	
+
 	public static void main( String[] args ) throws IOException {
 		int port = 8060;
 		if( args.length > 1 ) {
@@ -26,12 +26,12 @@ public class Server {
 				if( !gm.getWin( currentPlayer ) ) {
 					gm.permitPlayer( currentPlayer );
 					gm.sendToPlayer( currentPlayer, new CCMessage( "your_turn" ) );
-					
+
 					System.out.println( "#" + currentPlayer + "'s turn" );
-					
+
 					Field selected = null;
 					ArrayList<Field> legal = null;
-					
+
 					while( true ) {
 						CCMessage pm = gm.recvFromPlayer( currentPlayer );
 						if( pm.getSignal().equals( "pass" ) ) {
@@ -83,7 +83,7 @@ public class Server {
 						}
 					}
 					gm.haltPlayer( currentPlayer );
-					
+
 					// TODO
 					if( false /*currentPlayer has won*/ ) {
 						gm.sendToPlayer( currentPlayer, new CCMessage( "victory" ) );

@@ -10,23 +10,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class XConnection extends Connection {
-	
+
 	int id;
 	CCMessage conmsg;
-	
+
 	public void xconnect( String ip, int port ) throws IOException {
 		conmsg = connect( ip, port );
 		id = conmsg.getArg( 0 );
 	}
-	
+
 	public CCMessage getConnectionMessage() {
 		return conmsg;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
-	
+
 	/**
 	 * Request to select given field.
 	 * Board is needed to return proper set.
@@ -60,7 +60,7 @@ public class XConnection extends Connection {
 		}
 		return new ArrayList<Field>();
 	}
-	
+
 	/**
 	 * Attempt to move PREVIOUSLY SELECTED (using xselect) pawn to given field.
 	 * @param y
@@ -75,7 +75,7 @@ public class XConnection extends Connection {
 		CCMessage sm = sendCommand( cm );
 		return sm.getSignal() == "success";
 	}
-	
+
 	/**
 	 * Pass.
 	 * @return should always return true, may be false send without permission.
@@ -85,7 +85,7 @@ public class XConnection extends Connection {
 		CCMessage sm = sendCommand( new CCMessage( "pass" ) );
 		return sm.getSignal() == "success";
 	}
-	
+
 	/**
 	 * Translates CCMessage "move" to Fields on board.
 	 * @param msg
@@ -98,7 +98,7 @@ public class XConnection extends Connection {
 		ret[1] = board.getNode( msg.getArgs().get( 2 ) , msg.getArgs().get( 3 ) );
 		return ret;
 	}
-	
+
 	/**
 	 * Translates CCMessage "move" to FieldColor.
 	 * @param msg
@@ -107,7 +107,7 @@ public class XConnection extends Connection {
 	public FieldColor xgetColor( CCMessage msg ) {
 		return FieldColor.values()[msg.getArg( 4 )];
 	}
-	
+
 	/**
 	 * Wait for game to start.
 	 * @return player count, 0 if game not started
@@ -119,7 +119,7 @@ public class XConnection extends Connection {
 		}
 		else return 0;
 	}
-	
+
 	/**
 	 * Attempt to start the game
 	 * @return player count, 0 if game not started
@@ -132,7 +132,7 @@ public class XConnection extends Connection {
 		}
 		else return 0;
 	}
-	
+
 	public CCMessage xaddBot() throws IOException {
 		return sendCommand( new CCMessage( "add_bot" ) );
 	}
