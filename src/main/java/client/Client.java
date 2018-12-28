@@ -1,6 +1,5 @@
 package client;
 
-import communication.CCMessage;
 import game.Board;
 import game.Field;
 import game.FieldColor;
@@ -24,14 +23,18 @@ public class Client extends Application {
     Board board;
     boolean gameOn = false;
     XConnection xcon;
-    CCMessage msg;
     Listener lst;
+    Label showTurn = new Label("");
 
     private void setBoard(int playersNum) {
         if (playersNum != 0) {
             gameOn = true;
         }
         this.board = new Board(playersNum);
+    }
+
+    public void setTurnOn() {
+        showTurn.setText("Twój ruch");
     }
 
     private void waitForSignal() {
@@ -87,6 +90,7 @@ public class Client extends Application {
             try {
             	if( !lst.isItMyTurn() ) return;
                 if ( xcon.xpass()) {
+                    lst.endTurn();
                     waitForSignal();
                 }
             } catch (IOException exc) {}
@@ -97,27 +101,28 @@ public class Client extends Application {
         startGame.setOnAction(evt -> {
             try {
                 setBoard(xcon.xstart());
-                lst = new Listener( board, xcon );
-                waitForSignal();
-                for (int y = 0; y < board.HEIGHT; ++y) {
-                    for (int x = 0; x < board.WIDTH; ++x) {
-                        board.getNode(y, x).setCenterY(DISPLAY_HEIGHT*(y)/(board.HEIGHT-1));
-                        board.getNode(y, x).setCenterX(DISPLAY_WIDTH*((x+1-0.5*(y%2))+2)/board.WIDTH);
-                        board.getNode(y, x).setRadius(RADIUS);
-                        board.getNode(y, x).setFill(Paint.valueOf(board.getNode(y, x).getColor()));
-                        root.getChildren().add(board.getNode(y, x));
-                    }
-                }
-            } catch (IOException exc) {}
+        lst = new Listener(this);
+        menu.add(showTurn, 0, 7);
+        waitForSignal();
+        for (int y = 0; y < board.HEIGHT; ++y) {
+            for (int x = 0; x < board.WIDTH; ++x) {
+                board.getNode(y, x).setCenterY(DISPLAY_HEIGHT*(y)/(board.HEIGHT-1));
+                board.getNode(y, x).setCenterX(DISPLAY_WIDTH*((x+1-0.5*(y%2))+2)/board.WIDTH);
+                board.getNode(y, x).setRadius(RADIUS);
+                board.getNode(y, x).setFill(Paint.valueOf(board.getNode(y, x).getColor()));
+                root.getChildren().add(board.getNode(y, x));
+            }
+        }
+    } catch (IOException exc) {}
 
-        });
+});
 
         Button addBot = new Button("Dodaj bota");
 
         addBot.setOnAction(evt -> {
-            try {
-                xcon.xaddBot();
-            } catch (IOException exc) {}
+        try {
+        xcon.xaddBot();
+        } catch (IOException exc) {}
         });
 
         menu.add(joinGame, 0, 1);
@@ -130,56 +135,50 @@ public class Client extends Application {
 
         Button exit = new Button("Wyjdź");
         exit.setOnAction(evt -> {
-            xcon.close();
-            primaryStage.close();
+        xcon.close();
+        primaryStage.close();
         });
 
         menu.add(exit, 0, 4);
 
         joinGame.setOnAction(event -> {
             try {
+                    xcon.xconnect("127.0.0.1", 8060);
+                    clientColor.setFill(Paint.valueOf(FieldColor.values()[xcon.getId()].getColor()));
 
-                xcon.xconnect("127.0.0.1", 8060);
-
-                clientColor.setFill(Paint.valueOf(FieldColor.values()[xcon.getId()].getColor()));
-
-
-
-                if (xcon.getConnectionMessage().getSignal().equals("joined")) {
-                    setBoard(xcon.xwaitForGameStart());
-                    lst = new Listener( board, xcon );
-                    System.out.println( "###" );
-                    waitForSignal();
-                    for (int y = 0; y < board.HEIGHT; ++y) {
-                        for (int x = 0; x < board.WIDTH; ++x) {
-                            board.getNode(y, x).setCenterY(DISPLAY_HEIGHT*(y)/(board.HEIGHT-1));
-                            board.getNode(y, x).setCenterX(DISPLAY_WIDTH*((x+1-0.5*(y%2))+2)/board.WIDTH);
-                            board.getNode(y, x).setRadius(RADIUS);
-                            board.getNode(y, x).setFill(Paint.valueOf(board.getNode(y, x).getColor()));
-                            root.getChildren().add(board.getNode(y, x));
+                    if (xcon.getConnectionMessage().getSignal().equals("joined")) {
+                        setBoard(xcon.xwaitForGameStart());
+                        lst = new Listener(this);
+                        menu.add(showTurn, 0, 5);
+                        waitForSignal();
+                        for (int y = 0; y < board.HEIGHT; ++y) {
+                            for (int x = 0; x < board.WIDTH; ++x) {
+                                board.getNode(y, x).setCenterY(DISPLAY_HEIGHT*(y)/(board.HEIGHT-1));
+                                board.getNode(y, x).setCenterX(DISPLAY_WIDTH*((x+1-0.5*(y%2))+2)/board.WIDTH);
+                                board.getNode(y, x).setRadius(RADIUS);
+                                board.getNode(y, x).setFill(Paint.valueOf(board.getNode(y, x).getColor()));
+                                root.getChildren().add(board.getNode(y, x));
+                            }
                         }
-
                     }
-                }
-                else if (xcon.getConnectionMessage().getSignal().equals("created")) {
-                    menu.add(startGame, 0, 5);
-                    menu.add(addBot, 0, 6);
-                }
-            } catch (UnknownHostException exc) {}
-            catch (IOException exc) {}
-        });
-
-        s.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
-            try {
-            	if(!lst.isItMyTurn()) {}
-                else if (evt.getPickResult().getIntersectedNode() instanceof Field) {
-                    if (board.isLegal((Field) evt.getPickResult().getIntersectedNode())) {
-                       if (xcon.xmove(((Field) evt.getPickResult().getIntersectedNode()).getYCord(),((Field) evt.getPickResult().getIntersectedNode()).getXCord())) {
-                           System.out.println("HGH");
-                           board.flushHighlighted();
-                           lst.endTurn();
-                           waitForSignal();
+                       else if (xcon.getConnectionMessage().getSignal().equals("created")) {
+                           menu.add(startGame, 0, 5);
+                           menu.add(addBot, 0, 6);
                        }
+                    } catch (UnknownHostException exc) {}
+            catch (IOException exc) {}
+                });
+
+                s.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
+                    try {
+                        if(!lst.isItMyTurn()) {}
+                        else if (evt.getPickResult().getIntersectedNode() instanceof Field) {
+                            if (board.isLegal((Field) evt.getPickResult().getIntersectedNode())) {
+                                if (xcon.xmove(((Field) evt.getPickResult().getIntersectedNode()).getYCord(),((Field) evt.getPickResult().getIntersectedNode()).getXCord())) {
+                                    board.flushHighlighted();
+                                    lst.endTurn();
+                                    waitForSignal();
+                                }
                     } else {
                         board.flushHighlighted();
                         board.setHighlighted(xcon.xselect(((Field) evt.getPickResult().getIntersectedNode()).getYCord(), ((Field) evt.getPickResult().getIntersectedNode()).getXCord(), board));

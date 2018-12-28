@@ -89,6 +89,18 @@ public class Board {
         return board[y][x];
     }
 
+    public boolean equals(Board bd) {
+        for (int y = 0; y < board.length; ++y) {
+            for (int x = 0; x < board[0].length; ++x) {
+                if (!bd.getNode(y, x).getColor().equals(getNode(y, x))) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     public boolean isLegal(Field field) {
         return highlighted.contains(field);
     }

@@ -4,16 +4,22 @@ import communication.CCMessage;
 import game.Board;
 import game.Field;
 import game.FieldColor;
+import javafx.application.Application;
+import javafx.scene.control.Label;
 
 public class Listener implements Runnable {
 	
 	XConnection xcon;
 	Board board;
 	boolean myturn;
-	
-	Listener( Board b, XConnection c ) {
-		xcon = c;
-		board = b;
+	Label showTurn;
+	Client client;
+
+	Listener( Client client ) {
+		this.client = client;
+		xcon = client.xcon;
+		board = client.board;
+		showTurn = client.showTurn;
 		myturn = false;
 	}
 	
@@ -23,6 +29,12 @@ public class Listener implements Runnable {
 	
 	public void endTurn() {
 		myturn = false;
+		showTurn.setText("");
+	}
+
+	public void startTurn() {
+		myturn = true;
+		client.setTurnOn();
 	}
 	
 	@Override
@@ -30,12 +42,11 @@ public class Listener implements Runnable {
 		CCMessage msg;
 		do {
 			msg = xcon.recvSignal();
-			if( msg.getSignal().equals( "your_turn" ) ) {
-				myturn = true;
+			if( msg.getSignal().equals("your_turn") ) {
+				startTurn();
 				break;
 			}
 			else if( msg.getSignal().equals( "move" ) ) {
-				System.out.println("Dostalem");
 				Field[] fld = xcon.xgetMove(msg, board);
 	            FieldColor clr = xcon.xgetColor(msg);
 	            board.changeFieldColor(fld[1], clr);
