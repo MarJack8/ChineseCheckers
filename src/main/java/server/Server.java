@@ -42,7 +42,13 @@ public class Server {
 						}
 						else if( pm.getSignal().equals( "select" ) ) {
 							ArrayList<Integer> ag = pm.getArgs();
-							selected = board.getNode( ag.get( 0 ), ag.get( 1 ) );
+							try {
+								selected = board.getNode( ag.get( 0 ), ag.get( 1 ) );
+							}
+							catch( NullPointerException e ) {
+								gm.sendToPlayer( currentPlayer, new CCMessage( "illegal" ) );
+								continue;
+							}
 							if( selected.getFieldColor() == FieldColor.values()[ currentPlayer + 1 ] ) {
 								legal = board.getLegal( selected );
 								CCMessage sm = new CCMessage( "legal" );
