@@ -7,10 +7,12 @@ public abstract class Player extends Thread {
 	public final int id;
 	public GameMaster gm;
 	
-	public boolean win;
+	boolean win;
+	boolean dcd;
 	
 	Player( int _id ) {
 		win = false;
+		dcd = false;
 		id = _id;
 	}
 	
@@ -30,6 +32,13 @@ public abstract class Player extends Thread {
 		return win;
 	}
 	
-	abstract public void close() throws IOException;
+	public void setDcd() {
+		dcd = true;
+	}
 	
+	public boolean getDcd() {
+		return dcd;
+	}
+	
+	abstract public void close() throws IOException;
 }

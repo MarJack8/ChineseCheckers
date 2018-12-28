@@ -14,6 +14,12 @@ public class Server {
 
 	public static int port = 8060;
 	
+	static Board board;
+	
+	public static Board getBoard() {
+		return board;
+	}
+	
 	public static void main( String[] args ) throws IOException, InterruptedException {
 		if( args.length > 1 ) {
 			port = Integer.parseInt( args[0] );
@@ -22,9 +28,9 @@ public class Server {
 		GameMaster gm = new GameMaster( port );
 		if( gm.waitForClients() ) {
 			// In this point server has already sent "start_success" to all players
-			Board board = new Board( gm.getPlayerCount() );
+			board = new Board( gm.getPlayerCount() );
 			for( int currentPlayer = (new Random()).nextInt( gm.getPlayerCount() ); !gm.gameFinished(); currentPlayer = ( currentPlayer + 1 ) % gm.getPlayerCount() ) {
-				if( !gm.getWin( currentPlayer ) ) {
+				if( !gm.getWin( currentPlayer ) && !gm.getDcd( currentPlayer ) ) {
 					gm.permitPlayer( currentPlayer );
 					gm.sendToPlayer( currentPlayer, new CCMessage( "your_turn" ) );
 
@@ -66,7 +72,14 @@ public class Server {
 						else if( pm.getSignal().equals( "move" ) ) {
 							if( selected != null && legal != null ) {
 								ArrayList<Integer> ag = pm.getArgs();
-								Field destination = board.getNode( ag.get( 0 ), ag.get( 1 ) );
+								Field destination;
+								try {
+									destination = board.getNode( ag.get( 0 ), ag.get( 1 ) );
+								}
+								catch( NullPointerException e ) {
+									gm.sendToPlayer( currentPlayer, new CCMessage( "illegal" ) );
+									continue;
+								}
 								if( legal.contains( destination ) ) {
 									gm.sendToPlayer( currentPlayer, new CCMessage( "success" ) );
 									CCMessage sm = new CCMessage( "move" );
@@ -84,8 +97,10 @@ public class Server {
 							}
 							gm.sendToPlayer( currentPlayer, new CCMessage( "illegal" ) );
 						}
+						else if( pm.getSignal().equals( "disconnected" ) ) {
+							break;
+						}
 						else {
-							// Bad usage
 							gm.sendToPlayer( currentPlayer, new CCMessage( "no?" ) );
 						}
 					}
