@@ -35,7 +35,6 @@ public class Server {
 					while( true ) {
 						CCMessage pm = gm.recvFromPlayer( currentPlayer );
 						if( pm.getSignal().equals( "pass" ) ) {
-                            System.out.println("Uwaga pass");
 							gm.sendToPlayer( currentPlayer, new CCMessage( "success" ) );
 							System.out.println( "#" + currentPlayer + " passed" );
 							break;
@@ -71,15 +70,15 @@ public class Server {
 									sm.insertArg( currentPlayer + 1 );
 									gm.sendToAll( sm );
 									System.out.println( "#" + currentPlayer + " moved from (" + selected.getYCord() + "," + selected.getXCord() + ") to (" + destination.getYCord() + "," + destination.getXCord() + ")" );
-									destination.setColor( FieldColor.values()[ currentPlayer + 1 ] );
-									selected.setColor( FieldColor.NO_PLAYER );
+									board.changeFieldColor( destination, FieldColor.values()[ currentPlayer + 1 ] );
+						            board.changeFieldColor( selected, FieldColor.NO_PLAYER );
 									break;
 								}
 							}
 							gm.sendToPlayer( currentPlayer, new CCMessage( "illegal" ) );
 						}
 						else {
-							// Bad usage on server side
+							// Bad usage
 							gm.sendToPlayer( currentPlayer, new CCMessage( "no?" ) );
 						}
 					}
