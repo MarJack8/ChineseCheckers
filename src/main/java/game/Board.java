@@ -101,6 +101,20 @@ public class Board {
         highlighted.clear();
     }
 
+    public ArrayList<Field> getFieldsByColor(FieldColor fc) {
+        ArrayList<Field> result = new ArrayList<>();
+
+
+        for (int y = 0; y < board.length; ++y) {
+            for (int x = 0; x < board[0].length; ++x) {
+                if (board[y][x].getColor().equals(fc.getColor()))
+                    result.add(board[y][x]);
+            }
+        }
+
+        return result;
+    }
+
     public ArrayList<Field> getLegal(Field field) {
         this.flushHighlighted();
         this.highlightLegalMoves(field);
