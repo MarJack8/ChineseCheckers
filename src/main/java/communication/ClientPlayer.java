@@ -72,15 +72,16 @@ public class ClientPlayer extends Player {
 				else { // DURING GAME
 					// Free signals
 					if( msg.getSignal().equals( "leave" ) ) {
-						// TODO
-						// Surrender?
-						System.out.println( "### 'leave' signal not implemented" );
-						continue;
+						System.out.println( "#" + id + " left" );
+						send( new CCMessage( "goodbye" ) );
+						setDcd();
+						//received.add( new CCMessage( "disconnected" ) );
+						return;
 					}
 					// Signals that require permission
 					if( permitted ) {
 						received.add( msg );
-						System.out.println( "#" + id + " message registered" );
+						//System.out.println( "#" + id + " message registered" );
 					}
 					else {
 						System.out.println( "#" + id + " not permitted" );
@@ -117,6 +118,7 @@ public class ClientPlayer extends Player {
 		while( received.isEmpty() )
 			try {
 				Thread.sleep( 100 );
+				if( getDcd() ) return new CCMessage( "disconnected" );
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			};

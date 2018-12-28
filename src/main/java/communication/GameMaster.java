@@ -114,6 +114,12 @@ public class GameMaster {
         }
 	}
 	
+	public void removePlayer( Player p ) {
+		synchronized( playerCount ) {
+			players[p.id] = null;
+		}
+	}
+	
 	/**
 	 * 
 	 * @param p Player to remove
@@ -218,7 +224,16 @@ public class GameMaster {
 		int win = 0;
 		for( int i = 0; i<playerCount; i++ ) {
 			if( getWin( i ) ) win++;
+			if( getDcd( i ) ) win++;
 		}
 		return win >= getPlayerCount()-1;
+	}
+
+	public void setDcd( int i ) {
+		players[i].setDcd();
+	}
+	
+	public boolean getDcd( int i ) {
+		return players[i].getDcd();
 	}
 }

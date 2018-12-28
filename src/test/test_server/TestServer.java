@@ -66,19 +66,34 @@ class TestServer {
 				}
 				if( stage == 1 ) {
 					board = new Board( pc );
-					for( int i = 0; i<1; i++ ) {
+					for( int i = 0; i<20; i++ ) {
 						CCMessage msg = xcon.recvSignal();
 						if( msg.getSignal().equals( "your_turn" ) ) {
+							if( id == 1 && (i == 6 || i == 7) ) {
+								xcon.close();
+								return;
+							}
 							ArrayList<Field> myFields = board.getFieldsByColor( FieldColor.values()[ id ] );
 							if( myFields.isEmpty() ) fail( "No my fields" );
 							ArrayList<Field> legal = new ArrayList<>();
 							for( Field f: myFields ) {
 								legal = xcon.xselect( f.getYCord(), f.getXCord(), board );
+								if( !legal.isEmpty() ) break;
 							}
 							if( legal.isEmpty() ) fail( "No legal moves" );
-							if( xcon.xmove( legal.get( 0 ).getYCord(), legal.get( 0 ).getYCord() ) ) {
-								
+							if( xcon.xmove( legal.get( 0 ).getYCord(), legal.get( 0 ).getXCord() ) ) {
+								msg = xcon.recvSignal();
 							}
+							else fail( "Legal move illegal" );
+						}
+						if( msg.getSignal().equals( "move" ) ) {
+							Field[] fld = xcon.xgetMove(msg, board);
+				            FieldColor clr = xcon.xgetColor(msg);
+				            board.changeFieldColor(fld[1], clr);
+				            board.changeFieldColor(fld[0], FieldColor.NO_PLAYER);
+						}
+						if( msg.getSignal().equals( "finished" ) ) {
+							System.out.println( "--- #" + id + " reports that game has finished ---" );
 						}
 					}
 					xcon.close();
