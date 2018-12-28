@@ -73,7 +73,7 @@ public class XConnection extends Connection {
 		cm.insertArg( y );
 		cm.insertArg( x );
 		CCMessage sm = sendCommand( cm );
-		return sm.getSignal() == "success";
+		return sm.getSignal().equals("success");
 	}
 
 	/**

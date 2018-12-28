@@ -175,6 +175,7 @@ public class Client extends Application {
                 else if (evt.getPickResult().getIntersectedNode() instanceof Field) {
                     if (board.isLegal((Field) evt.getPickResult().getIntersectedNode())) {
                        if (xcon.xmove(((Field) evt.getPickResult().getIntersectedNode()).getYCord(),((Field) evt.getPickResult().getIntersectedNode()).getXCord())) {
+                           System.out.println("HGH");
                            board.flushHighlighted();
                            waitForSignal();
                        }
