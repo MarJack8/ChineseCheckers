@@ -25,6 +25,7 @@ public class Client extends Application {
     boolean gameOn = false;
     XConnection xcon;
     CCMessage msg;
+    Listener lst;
 
     private void setBoard(int playersNum) {
         if (playersNum != 0) {
@@ -34,16 +35,7 @@ public class Client extends Application {
     }
 
     private void waitForSignal() {
-        msg = xcon.recvSignal();
-
-        if (msg.getSignal().equals("your_turn")) {
-
-        } else if (msg.getSignal().equals("move")) {
-            Field[] fld = xcon.xgetMove(msg, board);
-            FieldColor clr = xcon.xgetColor(msg);
-            board.changeFieldColor(fld[1], clr);
-            board.changeFieldColor(fld[0], FieldColor.NO_PLAYER);
-        }
+       lst.start();
     }
 
     public static void main(String[] args) {
@@ -93,7 +85,8 @@ public class Client extends Application {
         Button pas = new Button("Pas");
         pas.setOnAction(event -> {
             try {
-                if (xcon.xpass()) {
+            	if( !lst.isItMyTurn() ) return;
+                if ( xcon.xpass()) {
                     waitForSignal();
                 }
             } catch (IOException exc) {}
@@ -104,7 +97,7 @@ public class Client extends Application {
         startGame.setOnAction(evt -> {
             try {
                 setBoard(xcon.xstart());
-
+                waitForSignal();
                 for (int y = 0; y < board.HEIGHT; ++y) {
                     for (int x = 0; x < board.WIDTH; ++x) {
                         board.getNode(y, x).setCenterY(DISPLAY_HEIGHT*(y)/(board.HEIGHT-1));
@@ -114,8 +107,6 @@ public class Client extends Application {
                         root.getChildren().add(board.getNode(y, x));
                     }
                 }
-
-                waitForSignal();
             } catch (IOException exc) {}
 
         });
@@ -147,11 +138,14 @@ public class Client extends Application {
         joinGame.setOnAction(event -> {
             try {
                 xcon.xconnect("127.0.0.1", 8060);
+                lst = new Listener( board, xcon );
 
                 clientColor.setFill(Paint.valueOf(FieldColor.values()[xcon.getId()].getColor()));
 
                 if (xcon.getConnectionMessage().getSignal().equals("joined")) {
                     setBoard(xcon.xwaitForGameStart());
+                    System.out.println( "###" );
+                    waitForSignal();
                     for (int y = 0; y < board.HEIGHT; ++y) {
                         for (int x = 0; x < board.WIDTH; ++x) {
                             board.getNode(y, x).setCenterY(DISPLAY_HEIGHT*(y)/(board.HEIGHT-1));
@@ -162,7 +156,6 @@ public class Client extends Application {
                         }
 
                     }
-                   waitForSignal();
                 }
                 else if (xcon.getConnectionMessage().getSignal().equals("created")) {
                     menu.add(startGame, 0, 5);
@@ -174,6 +167,7 @@ public class Client extends Application {
 
         s.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
             try {
+            	if( !lst.isItMyTurn() ) return;
                 if (evt.getPickResult().getIntersectedNode() instanceof Field) {
                     if (board.isLegal((Field) evt.getPickResult().getIntersectedNode())) {
                        if (xcon.xmove(((Field) evt.getPickResult().getIntersectedNode()).getYCord(),((Field) evt.getPickResult().getIntersectedNode()).getXCord())) {

@@ -47,8 +47,9 @@ public class GameMaster {
 	 * Exits when game administrator sends "start".
 	 * @throws IOException 
 	 * @return If game has successfully started
+	 * @throws InterruptedException 
 	 */
-	public boolean waitForClients() throws IOException {
+	public boolean waitForClients() throws IOException, InterruptedException {
 		System.out.println( "Waiting for connections..." );
 		while( !game_cancelled && !game_started ) {
 			try {
@@ -71,6 +72,7 @@ public class GameMaster {
 			}
 			CCMessage msg = new CCMessage( "start_success" );
 			msg.insertArg( getPlayerCount() );
+			Thread.sleep( 200 );
 			sendToAll( msg );
 		}
 		

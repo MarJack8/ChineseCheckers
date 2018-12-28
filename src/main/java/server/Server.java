@@ -12,8 +12,9 @@ import java.util.Random;
 
 public class Server {
 
-	public static void main( String[] args ) throws IOException {
-		int port = 8060;
+	public static int port = 8060;
+	
+	public static void main( String[] args ) throws IOException, InterruptedException {
 		if( args.length > 1 ) {
 			port = Integer.parseInt( args[0] );
 		}
@@ -68,6 +69,7 @@ public class Server {
 									sm.insertArg( destination.getYCord() );
 									sm.insertArg( destination.getXCord() );
 									sm.insertArg( currentPlayer + 1 );
+									Thread.sleep( 200 );
 									gm.sendToAll( sm );
 									System.out.println( "#" + currentPlayer + " moved from (" + selected.getYCord() + "," + selected.getXCord() + ") to (" + destination.getYCord() + "," + destination.getXCord() + ")" );
 									board.changeFieldColor( destination, FieldColor.values()[ currentPlayer + 1 ] );
