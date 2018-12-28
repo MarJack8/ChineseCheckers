@@ -35,7 +35,7 @@ public class Client extends Application {
     }
 
     private void waitForSignal() {
-       lst.start();
+       new Thread( lst ).start();
     }
 
     public static void main(String[] args) {

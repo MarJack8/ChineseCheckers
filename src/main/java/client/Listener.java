@@ -5,7 +5,7 @@ import game.Board;
 import game.Field;
 import game.FieldColor;
 
-public class Listener extends Thread {
+public class Listener implements Runnable {
 	
 	XConnection xcon;
 	Board board;

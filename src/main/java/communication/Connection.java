@@ -57,10 +57,8 @@ public class Connection {
 		try {
 			socket.setSoTimeout( 0 );
 			signal = CCMessage.fromString( in.readLine() );
-			System.out.println( "Client: " + signal );
 		}
 		catch( Exception e ) {
-			System.out.println( "Client: timeout" );
 			return new CCMessage( "timeout" );
 		}
 		return signal;

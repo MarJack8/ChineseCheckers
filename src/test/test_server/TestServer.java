@@ -3,11 +3,11 @@ package test_server;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import client.XConnection;
+import communication.CCMessage;
 import server.Server;
 
 class TestServer {
@@ -25,26 +25,48 @@ class TestServer {
 		}
 	}
 	
-	class ClientInstance extends Thread {
+	class ClientInstance implements Runnable {
 		
+		XConnection xcon;
+		public int id;
 		public int pc;
+		
+		int stage = 0;
+		
+		ClientInstance() {
+			xcon = new XConnection();
+			id = -1;
+		}
+		
+		public void xstart() throws Exception {
+			pc = xcon.xstart();
+			if( pc > 1 ) {
+				stage++;
+			}
+		}
 		
 		@Override
 		public void run() {
-			XConnection xcon = new XConnection();
 			try {
-				xcon.xconnect( "localhost", 8060 );
-				if( xcon.getId() == 1 ) {
-					System.out.println( "#" + xcon.getId() + " here. Calling xstart in 1000 ms"  );
-					Thread.sleep( 1000 );
-					pc = xcon.xstart();
+				if( stage == 0 ) {
+					xcon.xconnect( "localhost", 8060 );
+					id = xcon.getId();
+					if( id != 1 ) {
+						pc = xcon.xwaitForGameStart();
+						if( pc > 1 ) {
+							stage++;
+						}
+					}
 				}
-				else {
-					System.out.println( "#" + xcon.getId() + " here. Waiting for game to start"  );
-					pc = xcon.xwaitForGameStart();
+				if( stage == 1 ) {
+					for( int i = 0; i<3; i++ ) {
+						CCMessage msg = xcon.recvSignal();
+						if( msg.getSignal().equals( "your_turn" ) ) {
+							
+						}
+					}
+					xcon.close();
 				}
-				Thread.sleep( 1000 );
-				xcon.close();
 			} catch( Exception e ) {
 				e.printStackTrace();
 			}
@@ -59,15 +81,28 @@ class TestServer {
 	}
 	
 	@Test
-	public void testStartingGame() throws Exception {
+	public void testGame() throws Exception {
 		ClientInstance c1 = new ClientInstance();
 		ClientInstance c2 = new ClientInstance();
-		c1.start();
-		c2.start();
-		c1.join();
-		c2.join();
-		assertEquals( 2, c1.pc );
-		assertEquals( 2, c2.pc );
+		ClientInstance c3 = new ClientInstance();
+		Thread t1 = new Thread( c1 );
+		Thread t2 = new Thread( c2 );
+		Thread t3 = new Thread( c3 );
+		t1.start();
+		Thread.sleep( 100 );
+		t2.start();
+		t3.start();
+		t1.join();
+		assertEquals( 1, c1.id );
+		c1.xstart();
+		t1 = new Thread( c1 );
+		t1.start();
+		t1.join();
+		t2.join();
+		t3.join();
+		assertEquals( 3, c1.pc );
+		assertEquals( 3, c2.pc );
+		assertEquals( 3, c3.pc );
 	}
 	
 }
