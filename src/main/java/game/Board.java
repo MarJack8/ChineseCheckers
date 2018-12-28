@@ -92,7 +92,7 @@ public class Board {
     public boolean equals(Board bd) {
         for (int y = 0; y < board.length; ++y) {
             for (int x = 0; x < board[0].length; ++x) {
-                if (!bd.getNode(y, x).getColor().equals(getNode(y, x))) {
+                if (!bd.getNode(y, x).getColor().equals(getNode(y, x).getColor())) {
                     return false;
                 }
             }
@@ -115,7 +115,6 @@ public class Board {
 
     public ArrayList<Field> getFieldsByColor(FieldColor fc) {
         ArrayList<Field> result = new ArrayList<>();
-
 
         for (int y = 0; y < board.length; ++y) {
             for (int x = 0; x < board[0].length; ++x) {

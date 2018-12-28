@@ -37,6 +37,10 @@ public class Client extends Application {
         showTurn.setText("Twój ruch");
     }
 
+    public void setTurnOff() {
+        showTurn.setText("Nie twój ruch");
+    }
+
     private void waitForSignal() {
        new Thread( lst ).start();
     }
