@@ -69,7 +69,7 @@ public class Server {
 									sm.insertArg( destination.getYCord() );
 									sm.insertArg( destination.getXCord() );
 									sm.insertArg( currentPlayer + 1 );
-									Thread.sleep( 200 );
+									Thread.sleep( 2000 );
 									gm.sendToAll( sm );
 									System.out.println( "#" + currentPlayer + " moved from (" + selected.getYCord() + "," + selected.getXCord() + ") to (" + destination.getYCord() + "," + destination.getXCord() + ")" );
 									board.changeFieldColor( destination, FieldColor.values()[ currentPlayer + 1 ] );

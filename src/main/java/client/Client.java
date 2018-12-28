@@ -177,6 +177,7 @@ public class Client extends Application {
                        if (xcon.xmove(((Field) evt.getPickResult().getIntersectedNode()).getYCord(),((Field) evt.getPickResult().getIntersectedNode()).getXCord())) {
                            System.out.println("HGH");
                            board.flushHighlighted();
+                           lst.endTurn();
                            waitForSignal();
                        }
                     } else {

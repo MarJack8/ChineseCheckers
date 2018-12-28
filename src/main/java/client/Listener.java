@@ -21,11 +21,13 @@ public class Listener implements Runnable {
 		return myturn;
 	}
 	
+	public void endTurn() {
+		myturn = false;
+	}
+	
 	@Override
 	public void run() {
 		CCMessage msg;
-
-
 		do {
 			msg = xcon.recvSignal();
 			if( msg.getSignal().equals( "your_turn" ) ) {

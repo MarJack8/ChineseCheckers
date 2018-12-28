@@ -3,11 +3,16 @@ package test_server;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import client.XConnection;
 import communication.CCMessage;
+import game.Board;
+import game.Field;
+import game.FieldColor;
 import server.Server;
 
 class TestServer {
@@ -30,6 +35,7 @@ class TestServer {
 		XConnection xcon;
 		public int id;
 		public int pc;
+		Board board;
 		
 		int stage = 0;
 		
@@ -59,10 +65,20 @@ class TestServer {
 					}
 				}
 				if( stage == 1 ) {
-					for( int i = 0; i<3; i++ ) {
+					board = new Board( pc );
+					for( int i = 0; i<1; i++ ) {
 						CCMessage msg = xcon.recvSignal();
 						if( msg.getSignal().equals( "your_turn" ) ) {
-							
+							ArrayList<Field> myFields = board.getFieldsByColor( FieldColor.values()[ id ] );
+							if( myFields.isEmpty() ) fail( "No my fields" );
+							ArrayList<Field> legal = new ArrayList<>();
+							for( Field f: myFields ) {
+								legal = xcon.xselect( f.getYCord(), f.getXCord(), board );
+							}
+							if( legal.isEmpty() ) fail( "No legal moves" );
+							if( xcon.xmove( legal.get( 0 ).getYCord(), legal.get( 0 ).getYCord() ) ) {
+								
+							}
 						}
 					}
 					xcon.close();
@@ -84,14 +100,11 @@ class TestServer {
 	public void testGame() throws Exception {
 		ClientInstance c1 = new ClientInstance();
 		ClientInstance c2 = new ClientInstance();
-		ClientInstance c3 = new ClientInstance();
 		Thread t1 = new Thread( c1 );
 		Thread t2 = new Thread( c2 );
-		Thread t3 = new Thread( c3 );
 		t1.start();
 		Thread.sleep( 100 );
 		t2.start();
-		t3.start();
 		t1.join();
 		assertEquals( 1, c1.id );
 		c1.xstart();
@@ -99,10 +112,8 @@ class TestServer {
 		t1.start();
 		t1.join();
 		t2.join();
-		t3.join();
-		assertEquals( 3, c1.pc );
-		assertEquals( 3, c2.pc );
-		assertEquals( 3, c3.pc );
+		assertEquals( 2, c1.pc );
+		assertEquals( 2, c2.pc );
 	}
 	
 }
