@@ -24,13 +24,16 @@ public class Listener implements Runnable {
 	@Override
 	public void run() {
 		CCMessage msg;
+
+
 		do {
 			msg = xcon.recvSignal();
 			if( msg.getSignal().equals( "your_turn" ) ) {
 				myturn = true;
 				break;
 			}
-			if( msg.getSignal().equals( "move" ) ) {
+			else if( msg.getSignal().equals( "move" ) ) {
+				System.out.println("Dostalem");
 				Field[] fld = xcon.xgetMove(msg, board);
 	            FieldColor clr = xcon.xgetColor(msg);
 	            board.changeFieldColor(fld[1], clr);

@@ -137,10 +137,12 @@ public class Client extends Application {
 
         joinGame.setOnAction(event -> {
             try {
+
                 xcon.xconnect("127.0.0.1", 8060);
                 lst = new Listener( board, xcon );
-
                 clientColor.setFill(Paint.valueOf(FieldColor.values()[xcon.getId()].getColor()));
+
+
 
                 if (xcon.getConnectionMessage().getSignal().equals("joined")) {
                     setBoard(xcon.xwaitForGameStart());
@@ -167,8 +169,8 @@ public class Client extends Application {
 
         s.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
             try {
-            	if( !lst.isItMyTurn() ) return;
-                if (evt.getPickResult().getIntersectedNode() instanceof Field) {
+            	if(!lst.isItMyTurn()) {}
+                else if (evt.getPickResult().getIntersectedNode() instanceof Field) {
                     if (board.isLegal((Field) evt.getPickResult().getIntersectedNode())) {
                        if (xcon.xmove(((Field) evt.getPickResult().getIntersectedNode()).getYCord(),((Field) evt.getPickResult().getIntersectedNode()).getXCord())) {
                            board.flushHighlighted();
