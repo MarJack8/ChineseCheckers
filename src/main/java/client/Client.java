@@ -97,6 +97,7 @@ public class Client extends Application {
         startGame.setOnAction(evt -> {
             try {
                 setBoard(xcon.xstart());
+                lst = new Listener( board, xcon );
                 waitForSignal();
                 for (int y = 0; y < board.HEIGHT; ++y) {
                     for (int x = 0; x < board.WIDTH; ++x) {
@@ -139,13 +140,14 @@ public class Client extends Application {
             try {
 
                 xcon.xconnect("127.0.0.1", 8060);
-                lst = new Listener( board, xcon );
+
                 clientColor.setFill(Paint.valueOf(FieldColor.values()[xcon.getId()].getColor()));
 
 
 
                 if (xcon.getConnectionMessage().getSignal().equals("joined")) {
                     setBoard(xcon.xwaitForGameStart());
+                    lst = new Listener( board, xcon );
                     System.out.println( "###" );
                     waitForSignal();
                     for (int y = 0; y < board.HEIGHT; ++y) {
