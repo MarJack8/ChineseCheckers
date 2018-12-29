@@ -103,8 +103,21 @@ public class Board {
 
     public ArrayList<Field> getWinningFields(FieldColor fc) {
         ArrayList<Field> result = new ArrayList<Field>();
+        int num = 0;
 
+        if (board[1][6].getColor().equals(fc.getColor())) num = 4;
+        else if (board[5][9].getColor().equals(fc.getColor())) num = 5;
+        else if (board[5][0].getColor().equals(fc.getColor())) num = 3;
+        else if (board[10][1].getColor().equals(fc.getColor())) num = 2;
+        else if (board[10][10].getColor().equals(fc.getColor())) num = 6;
+        else if (board[17][1].getColor().equals(fc.getColor())) num = 1;
 
+        for (int i = 0; i < START_BOARD.length; ++i)
+            for (int j = 0; j < START_BOARD[0].length; ++j) {
+                if (START_BOARD[i][j] == num) {
+                    result.add(board[i][j]);
+                }
+            }
 
         return result;
     }
