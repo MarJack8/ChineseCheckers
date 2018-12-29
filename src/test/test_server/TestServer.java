@@ -125,7 +125,6 @@ class TestServer {
 		Thread t1 = new Thread( c1 );
 		Thread t2 = new Thread( c2 );
 		t1.start();
-		Thread.sleep( 100 );
 		t2.start();
 		t1.join();
 		assertEquals( 1, c1.id );

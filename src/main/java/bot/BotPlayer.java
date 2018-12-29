@@ -38,10 +38,13 @@ public class BotPlayer extends Player {
 	public void run() {
 		while( !gm.game_cancelled ) {
 			try {
-				while( !gm.game_started ) Thread.sleep( 100 );
-				board = new Board( gm.getPlayerCount() );
+				if( !gm.game_started ) {
+					while( !gm.game_started ) Thread.sleep( 100 );
+					board = new Board( gm.getPlayerCount() );
+				}
 				CCMessage msg = readInput();
 				if( msg.getSignal().equals( "move" ) ) {
+					System.out.println( msg );
 					Field[] fld = getMove( msg, board );
 		            FieldColor clr = getColor( msg );
 		            board.changeFieldColor( fld[1], clr );
@@ -53,25 +56,36 @@ public class BotPlayer extends Player {
 				else if( msg.getSignal().equals( "your_turn" ) ) {
 					ArrayList<Field> myFields = board.getFieldsByColor( FieldColor.values()[ id+1 ] );
 					if( myFields.isEmpty() ) {
-						System.out.println( "No legal moves!!!" );
+						System.out.println( "No my fields!!!" );
 						output.add( new CCMessage( "pass" ) );
+						continue;
 					}
 					ArrayList<Field> legal = new ArrayList<>();
 					for( Field f: myFields ) {
+						System.out.println( "Bot#" + id + ": attempting to select (" + f.getYCord() + "," + f.getXCord() + ")" );
 						legal = select( f.getYCord(), f.getXCord(), board );
 						if( !legal.isEmpty() ) break;
 					}
-					if( legal.isEmpty() ) fail( "No legal moves" );
+					if( legal.isEmpty() ) {
+						System.out.println( "Bot#" + id + ": found no legal moves" );
+						output.add( new CCMessage( "pass" ) );
+						continue;
+					}
+					System.out.println( "Bot#" + id + ": attempting to move to (" + legal.get( 0 ).getYCord() + "," + legal.get( 0 ).getXCord() + ")" );
 					if( move( legal.get( 0 ).getYCord(), legal.get( 0 ).getXCord() ) ) {
-						/// OK
+						continue;
 					}
 					else {
 						System.out.println( "Legal move is illegal!!!" );
 						output.add( new CCMessage( "pass" ) );
+						continue;
 					}
 				}
 				else if( msg.getSignal().equals( "ping" ) ) {
 					output.add( new CCMessage( "pong" ) );
+				}
+				else if( msg.getSignal().equals( "victory" ) ) {
+					System.out.println( "Bot#" + id + ": gg (" + msg.getArg( 0 ) + " place)" );
 				}
 			}
 			catch( InterruptedException e ) {
@@ -142,7 +156,7 @@ public class BotPlayer extends Player {
 	}
 
 	FieldColor getColor( CCMessage msg ) {
-		return FieldColor.values()[ msg.getArg( 4 ) + 1 ];
+		return FieldColor.values()[ msg.getArg( 4 ) ];
 	}
 	
 	ArrayList<Field> select( int y, int x, Board board ) throws InterruptedException {
@@ -167,6 +181,9 @@ public class BotPlayer extends Player {
 				}
 			}
 			return ret;
+		}
+		else {
+			System.out.println( "Bot#" + id + ": illegal selection?" );
 		}
 		return new ArrayList<Field>();
 	}

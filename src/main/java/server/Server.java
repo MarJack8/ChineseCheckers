@@ -26,9 +26,14 @@ public class Server {
 		}
 		System.out.println( "Starting at " + port );
 		GameMaster gm = new GameMaster( port );
+		int place = 1;
 		if( gm.waitForClients() ) {
 			// In this point server has already sent "start_success" to all players
 			board = new Board( gm.getPlayerCount() );
+			ArrayList<ArrayList<Field>> winning = new ArrayList<>();
+			for( int i = 0; i<gm.getPlayerCount(); i++ ) {
+				winning.add( board.getWinningFields( FieldColor.values()[ i + 1 ] ) );
+			}
 			for( int currentPlayer = (new Random()).nextInt( gm.getPlayerCount() ); !gm.gameFinished(); currentPlayer = ( currentPlayer + 1 ) % gm.getPlayerCount() ) {
 				if( !gm.getWin( currentPlayer ) && !gm.getDcd( currentPlayer ) ) {
 					gm.permitPlayer( currentPlayer );
@@ -106,9 +111,12 @@ public class Server {
 					}
 					gm.haltPlayer( currentPlayer );
 
-					// TODO
-					if( false /*currentPlayer has won*/ ) {
-						gm.sendToPlayer( currentPlayer, new CCMessage( "victory" ) );
+					if( winning.get( currentPlayer ).containsAll( board.getFieldsByColor( FieldColor.values()[ currentPlayer + 1 ] ) ) ) {
+						System.out.println( "#" + currentPlayer + " wins! (" + place + " place)" );
+						CCMessage vm = new CCMessage( "victory" );
+						vm.insertArg( place );
+						place++;
+						gm.sendToPlayer( currentPlayer, vm );
 						gm.setWin( currentPlayer );
 					}
 				}
