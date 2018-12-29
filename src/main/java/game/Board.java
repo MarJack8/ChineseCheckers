@@ -267,7 +267,7 @@ public class Board {
             if (xSelected != 0 && ySelected % 2 == 1) {
                 highlightField(this.getNode(ySelected - 1, xSelected - 1));
                 highlightField(this.getNode(ySelected + 1, xSelected - 1));
-            } else {
+            } else if (xSelected != WIDTH-1) {
                 highlightField(this.getNode(ySelected - 1, xSelected + 1));
                 highlightField(this.getNode(ySelected + 1, xSelected + 1));
             }
@@ -276,7 +276,9 @@ public class Board {
             if (xSelected != 0) {
                 highlightField(this.getNode(ySelected, xSelected - 1));
             }
-            highlightField(this.getNode(ySelected, xSelected + 1));
+            if (xSelected != WIDTH-1) {
+                highlightField(this.getNode(ySelected, xSelected + 1));
+            }
         }
 
         findAHop(selected);
