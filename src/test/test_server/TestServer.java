@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +36,7 @@ class TestServer {
 		XConnection xcon;
 		public int id;
 		public int pc;
-		Board board;
+		public Board board;
 		
 		int stage = 0;
 		
@@ -111,6 +112,12 @@ class TestServer {
 		si.start();
 	}
 	
+	@SuppressWarnings("deprecation")
+	@AfterAll
+	static public void stopServer() {
+		si.stop();
+	}
+	
 	@Test
 	public void testGame() throws Exception {
 		ClientInstance c1 = new ClientInstance();
@@ -129,6 +136,8 @@ class TestServer {
 		t2.join();
 		assertEquals( 2, c1.pc );
 		assertEquals( 2, c2.pc );
+		assertTrue( Server.getBoard().equals( c1.board ) );
+		assertTrue( Server.getBoard().equals( c2.board ) );
 	}
 	
 }

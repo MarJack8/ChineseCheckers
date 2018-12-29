@@ -10,7 +10,7 @@ public abstract class Player extends Thread {
 	boolean win;
 	boolean dcd;
 	
-	Player( int _id ) {
+	protected Player( int _id ) {
 		win = false;
 		dcd = false;
 		id = _id;

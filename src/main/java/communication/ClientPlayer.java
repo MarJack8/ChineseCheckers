@@ -67,6 +67,10 @@ public class ClientPlayer extends Player {
 								gm.start();
 							}
 						}
+						if( msg.getSignal().equals( "add_bot" ) ) {
+							if( gm.addBot() ) send( new CCMessage( "success" ) );
+							else send( new CCMessage( "failure" ) );
+						}
 					}
 				}
 				else { // DURING GAME

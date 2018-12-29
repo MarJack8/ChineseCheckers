@@ -8,6 +8,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import bot.BotPlayer;
+
 /**
  * Server side of connection
  * @author Tomasz
@@ -25,7 +27,9 @@ public class GameMaster {
 	
 	public GameMaster( int _port ) throws IOException {
 		port = _port;
-		server = new ServerSocket( _port );
+		if( port != 0 ) {
+			server = new ServerSocket( _port );
+		}
 		players = new Player[6];
 		playerCount = 0;
 		game_started = false;
@@ -102,8 +106,8 @@ public class GameMaster {
             		ClientPlayer cp = new ClientPlayer( playerCount, client, out, in );
             		cp.gm = this;
             		players[playerCount] = cp;
-            		cp.start();
             		playerCount++;
+            		cp.start();
             		System.out.println( "Accepted new client #" + cp.id );
             	}
         	}
@@ -112,6 +116,19 @@ public class GameMaster {
         	out.println( new CCMessage( "refuse" ).toString() );
         	System.out.println( "Refused new client, invalid request" );
         }
+	}
+	
+	public boolean addBot() {
+		synchronized( playerCount ) {
+			if( playerCount >= 6 ) return false;
+			BotPlayer bp = new BotPlayer( playerCount );
+			bp.gm = this;
+			players[playerCount] = bp;
+			playerCount++;
+			bp.start();
+			System.out.println( "Added new bot #" + bp.id );
+		}
+		return true;
 	}
 	
 	public void removePlayer( Player p ) {
@@ -235,5 +252,12 @@ public class GameMaster {
 	
 	public boolean getDcd( int i ) {
 		return players[i].getDcd();
+	}
+	
+	public int simulateBot() {
+		int bot = playerCount;
+		addBot();
+		game_started = true;
+		return bot;
 	}
 }

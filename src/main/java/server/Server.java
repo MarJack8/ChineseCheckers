@@ -120,6 +120,7 @@ public class Server {
 			System.out.println( "Game not started" );
 		}
 		gm.close();
+		System.out.println( "Server closed" );
 	}
 
 }
