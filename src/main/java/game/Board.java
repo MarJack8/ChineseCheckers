@@ -252,7 +252,7 @@ public class Board {
             int ySelected = selected.getYCord();
             int xSelected = selected.getXCord();
 
-            if (ySelected % 2 == 1) {
+            if (xSelected != 0 && ySelected % 2 == 1) {
                 highlightField(this.getNode(ySelected - 1, xSelected - 1));
                 highlightField(this.getNode(ySelected + 1, xSelected - 1));
             } else {
@@ -261,7 +261,9 @@ public class Board {
             }
             highlightField(this.getNode(ySelected - 1, xSelected));
             highlightField(this.getNode(ySelected + 1, xSelected));
-            highlightField(this.getNode(ySelected, xSelected - 1));
+            if (xSelected != 0) {
+                highlightField(this.getNode(ySelected, xSelected - 1));
+            }
             highlightField(this.getNode(ySelected, xSelected + 1));
         }
 
