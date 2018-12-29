@@ -37,6 +37,10 @@ public class Client extends Application {
         showTurn.setText("Twój ruch");
     }
 
+    public void victoryOn(int n) {
+        showTurn.setText("Zwycięstwo. Zająłeś " + n + ". miejsce");
+    }
+
     public void setTurnOff() {
         showTurn.setText("Nie twój ruch");
     }

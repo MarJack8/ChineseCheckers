@@ -3,6 +3,7 @@ package game;
 import javafx.scene.paint.Paint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Board {
     static private final int[][] START_BOARD = {
@@ -49,6 +50,7 @@ public class Board {
     private Field board[][];
     public Field selected;
     private ArrayList<Field> highlighted;
+    private HashMap<FieldColor, ArrayList<Field>> winningFields;
 
     public Board(int playersNum) {
         int[][] pNums = {

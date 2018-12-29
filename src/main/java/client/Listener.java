@@ -53,6 +53,14 @@ public class Listener implements Runnable {
 	            board.changeFieldColor(fld[1], clr);
 	            board.changeFieldColor(fld[0], FieldColor.NO_PLAYER);
 			}
+			else if (msg.getSignal().equals("victory")) {
+				int n = msg.getArg(0);
+				Platform.runLater(new Runnable() {
+					@Override public void run() {
+						client.victoryOn(n);
+					}
+				});
+			}
 			else if (msg.getSignal().equals("finished")) {
 				break;
 			}
