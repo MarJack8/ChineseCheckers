@@ -55,7 +55,7 @@ public class Board {
                 {0},
                 {0},
                 {1, 4},
-                {1, 2, 6},
+                {1, 3, 5},
                 {2, 3, 5, 6},
                 {0},
                 {1, 2, 3, 4, 5, 6}
@@ -99,6 +99,14 @@ public class Board {
         }
 
         return true;
+    }
+
+    public ArrayList<Field> getWinningFields(FieldColor fc) {
+        ArrayList<Field> result = new ArrayList<Field>();
+
+
+
+        return result;
     }
 
     public boolean isLegal(Field field) {
@@ -247,3 +255,13 @@ public class Board {
         findAHop(selected);
     }
 }
+
+/*
+@Test
+    public void testBoardEquals() {
+        Board a = new Board( 2 );
+        Board b = new Board( 2 );
+        assertTrue( a.equals( a ) );
+        assertTrue( a.equals( b ) );
+    }
+ */

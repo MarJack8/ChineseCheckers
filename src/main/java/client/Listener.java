@@ -4,9 +4,7 @@ import communication.CCMessage;
 import game.Board;
 import game.Field;
 import game.FieldColor;
-import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
 
 public class Listener implements Runnable {
 	
