@@ -38,7 +38,7 @@ public class Client extends Application {
     }
 
     public void victoryOn(int n) {
-        showTurn.setText("Zwycięstwo. Zająłeś " + n + ". miejsce");
+        showTurn.setText("Zwycięstwo\nZająłeś " + n + ". miejsce");
     }
 
     public void setTurnOff() {
@@ -193,9 +193,8 @@ public class Client extends Application {
                         board.highlight();
                     }
                 }
-            } catch (NullPointerException exc) {
-                System.out.println("No Field clicked.");
-            } catch (IOException exc) {}
+            } catch (NullPointerException exc) {}
+            catch (IOException exc) {}
         });
 
         primaryStage.setScene(s);

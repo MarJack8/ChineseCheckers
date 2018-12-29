@@ -19,4 +19,12 @@ public enum FieldColor {
     public String getColor() {
         return color;
     }
+
+    public static FieldColor getFieldColorFromColor(String color) {
+        for (FieldColor fc: FieldColor.values()) {
+            if (fc.getColor().equals(color))
+                return fc;
+        }
+        return FieldColor.NO_PLAYER;
+    }
 }

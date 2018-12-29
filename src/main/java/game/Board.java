@@ -65,6 +65,12 @@ public class Board {
 
         board = new Field[HEIGHT][WIDTH];
         highlighted = new ArrayList<>();
+        winningFields = new HashMap<>();
+
+        for (int i = 0; i < playersNum; ++i) {
+            winningFields.put(FieldColor.values()[i+1], new ArrayList<>());
+        }
+
         for (int y = 0; y < board.length; ++y) {
             for (int x = 0; x < board[0].length; ++x) {
                 if (START_BOARD[y][x] == 0){
@@ -80,6 +86,17 @@ public class Board {
                     }
                 } else {
                     board[y][x] = Field.getNullField();
+                }
+            }
+        }
+
+        for (int y = 0; y < board.length; ++y) {
+            for (int x = 0; x < board[0].length; ++x) {
+                for (int i = 0; i < playersNum; ++i) {
+                    if (START_BOARD[y][x] == pNums[playersNum][i]) {
+                        winningFields.get(FieldColor.values()[i+1]).add(board[HEIGHT-y-1][WIDTH-x-2+(y%2)]);
+                        break;
+                    }
                 }
             }
         }
@@ -104,24 +121,7 @@ public class Board {
     }
 
     public ArrayList<Field> getWinningFields(FieldColor fc) {
-        ArrayList<Field> result = new ArrayList<Field>();
-        int num = 0;
-
-        if (board[1][6].getColor().equals(fc.getColor())) num = 4;
-        else if (board[5][9].getColor().equals(fc.getColor())) num = 5;
-        else if (board[5][0].getColor().equals(fc.getColor())) num = 3;
-        else if (board[10][1].getColor().equals(fc.getColor())) num = 2;
-        else if (board[10][10].getColor().equals(fc.getColor())) num = 6;
-        else if (board[17][1].getColor().equals(fc.getColor())) num = 1;
-
-        for (int i = 0; i < START_BOARD.length; ++i)
-            for (int j = 0; j < START_BOARD[0].length; ++j) {
-                if (START_BOARD[i][j] == num) {
-                    result.add(board[i][j]);
-                }
-            }
-
-        return result;
+        return winningFields.get(fc);
     }
 
     public boolean isLegal(Field field) {
@@ -152,6 +152,16 @@ public class Board {
     public ArrayList<Field> getLegal(Field field) {
         this.flushHighlighted();
         this.highlightLegalMoves(field);
+
+        if (winningFields.get(FieldColor.getFieldColorFromColor(field.getColor())).contains(field)) {
+            ArrayList<Field> intersection = new ArrayList<>();
+            for (Field fd : highlighted) {
+                if (winningFields.get(FieldColor.getFieldColorFromColor(field.getColor())).contains(fd))
+                    intersection.add(fd);
+            }
+
+            highlighted = intersection;
+        }
 
         return highlighted;
     }
