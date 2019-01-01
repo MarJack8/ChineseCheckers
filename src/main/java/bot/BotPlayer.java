@@ -80,20 +80,33 @@ public class BotPlayer extends Player {
 					Field to = null;
 					double mg_min = Double.MAX_VALUE;
 					for( Field f: myFields ) {
-						ArrayList<Field> legal = select( f.getYCord(), f.getXCord(), board );
+						ArrayList<Field> legal = board.getLegal( f );
 						if( legal.isEmpty() ) continue;
 						double sg = Math.sqrt( Math.pow(f.getCenterY() - myCorner.getCenterY(), 2) + Math.pow(f.getCenterX() - myCorner.getCenterX(), 2) );
-						System.out.println( sg );
 						for( Field l: legal ) {
 							double mg = Math.sqrt( Math.pow(l.getCenterY() - myCorner.getCenterY(), 2) + Math.pow(l.getCenterX() - myCorner.getCenterX(), 2) );
 							if( mg < sg && mg < mg_min ) {
-								System.out.println( mg );
 								mg_min = mg;
 								from = f;
 								to = l;
 							}
 						}
-						
+					}
+					if( from == null || to == null ) {
+						for( Field f: myGoal ) if( !f.getFieldColor().equals( FieldColor.values()[ id+1 ] ) ) myCorner = f;
+						for( Field f: myFields ) {
+							ArrayList<Field> legal = board.getLegal( f );
+							if( legal.isEmpty() ) continue;
+							double sg = Math.sqrt( Math.pow(f.getCenterY() - myCorner.getCenterY(), 2) + Math.pow(f.getCenterX() - myCorner.getCenterX(), 2) );
+							for( Field l: legal ) {
+								double mg = Math.sqrt( Math.pow(l.getCenterY() - myCorner.getCenterY(), 2) + Math.pow(l.getCenterX() - myCorner.getCenterX(), 2) );
+								if( mg < sg && mg < mg_min ) {
+									mg_min = mg;
+									from = f;
+									to = l;
+								}
+							}
+						}
 					}
 					if( from == null || to == null ) {
 						System.out.println( "Bot#" + id + ": found no moves" );
