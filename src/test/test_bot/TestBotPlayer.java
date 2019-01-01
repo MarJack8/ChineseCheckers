@@ -7,7 +7,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import communication.CCMessage;
 import communication.GameMaster;
-
 class TestBotPlayer {
 
 	@Test

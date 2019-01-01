@@ -1,7 +1,5 @@
 package bot;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -20,6 +18,8 @@ public class BotPlayer extends Player {
 	boolean permitted;
 	Queue<CCMessage> input;
 	Queue<CCMessage> output;
+	ArrayList<Field> myGoal;
+	Field myCorner;
 	
 	public BotPlayer( int _id ) {
 		super(_id);
@@ -41,10 +41,26 @@ public class BotPlayer extends Player {
 				if( !gm.game_started ) {
 					while( !gm.game_started ) Thread.sleep( 100 );
 					board = new Board( gm.getPlayerCount() );
+					
+					for (int y = 0; y < board.HEIGHT; ++y) {
+			            for (int x = 0; x < board.WIDTH; ++x) {
+			                board.getNode(y, x).setCenterY(100*(y)/(board.HEIGHT-1));
+			                board.getNode(y, x).setCenterX(100*((x+1-0.5*(y%2))+2)/board.WIDTH);
+			            }
+					}
+					
+					myGoal = board.getWinningFields( FieldColor.values()[ id+1 ] );
+					for( Field f: myGoal ) {
+						if( f.equals( board.getNode( 1, 6) ) ) { myCorner = f; break; }
+						if( f.equals( board.getNode( 5, 0) ) ) { myCorner = f; break; }
+						if( f.equals( board.getNode( 5, 12) ) ) { myCorner = f; break; }
+						if( f.equals( board.getNode( 13, 0) ) ) { myCorner = f; break; }
+						if( f.equals( board.getNode( 13, 12) ) ) { myCorner = f; break; }
+						if( f.equals( board.getNode( 17, 6) ) ) { myCorner = f; break; }
+					}
 				}
 				CCMessage msg = readInput();
 				if( msg.getSignal().equals( "move" ) ) {
-					System.out.println( msg );
 					Field[] fld = getMove( msg, board );
 		            FieldColor clr = getColor( msg );
 		            board.changeFieldColor( fld[1], clr );
@@ -60,19 +76,38 @@ public class BotPlayer extends Player {
 						output.add( new CCMessage( "pass" ) );
 						continue;
 					}
-					ArrayList<Field> legal = new ArrayList<>();
+					Field from = null;
+					Field to = null;
+					double mg_min = Double.MAX_VALUE;
 					for( Field f: myFields ) {
-						System.out.println( "Bot#" + id + ": attempting to select (" + f.getYCord() + "," + f.getXCord() + ")" );
-						legal = select( f.getYCord(), f.getXCord(), board );
-						if( !legal.isEmpty() ) break;
+						ArrayList<Field> legal = select( f.getYCord(), f.getXCord(), board );
+						if( legal.isEmpty() ) continue;
+						double sg = Math.sqrt( Math.pow(f.getCenterY() - myCorner.getCenterY(), 2) + Math.pow(f.getCenterX() - myCorner.getCenterX(), 2) );
+						System.out.println( sg );
+						for( Field l: legal ) {
+							double mg = Math.sqrt( Math.pow(l.getCenterY() - myCorner.getCenterY(), 2) + Math.pow(l.getCenterX() - myCorner.getCenterX(), 2) );
+							if( mg < sg && mg < mg_min ) {
+								System.out.println( mg );
+								mg_min = mg;
+								from = f;
+								to = l;
+							}
+						}
+						
 					}
-					if( legal.isEmpty() ) {
-						System.out.println( "Bot#" + id + ": found no legal moves" );
+					if( from == null || to == null ) {
+						System.out.println( "Bot#" + id + ": found no moves" );
 						output.add( new CCMessage( "pass" ) );
 						continue;
 					}
-					System.out.println( "Bot#" + id + ": attempting to move to (" + legal.get( 0 ).getYCord() + "," + legal.get( 0 ).getXCord() + ")" );
-					if( move( legal.get( 0 ).getYCord(), legal.get( 0 ).getXCord() ) ) {
+					System.out.println( "Bot#" + id + ": attempting to select (" + from.getYCord() + "," + from.getXCord() + ")" );
+					if( !select( from.getYCord(), from.getXCord(), board ).contains( to ) ) {
+						System.out.println( "Bot#" + id + ": fatal error" );
+						output.add( new CCMessage( "pass" ) );
+						continue;
+					}
+					System.out.println( "Bot#" + id + ": attempting to move to (" + to.getYCord() + "," + to.getXCord() + ")" );
+					if( move( to.getYCord(), to.getXCord() ) ) {
 						continue;
 					}
 					else {
