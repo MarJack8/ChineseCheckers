@@ -21,9 +21,9 @@ import java.net.UnknownHostException;
 
 public class Client extends Application {
     Board board;
-    boolean gameOn = false;
+    private boolean gameOn = false;
     XConnection xcon;
-    Listener lst;
+    private Listener lst;
     Label showTurn = new Label("");
 
     private void setBoard(int playersNum) {

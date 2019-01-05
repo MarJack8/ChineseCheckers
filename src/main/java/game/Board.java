@@ -102,12 +102,6 @@ public class Board {
         }
     }
 
-    public Field getNode(int y, int x) {
-        if (y >= HEIGHT || y < 0 || x >= WIDTH || x < 0)
-            throw new NullPointerException();
-        return board[y][x];
-    }
-
     public boolean equals(Board bd) {
         for (int y = 0; y < board.length; ++y) {
             for (int x = 0; x < board[0].length; ++x) {
@@ -118,6 +112,12 @@ public class Board {
         }
 
         return true;
+    }
+
+    public Field getNode(int y, int x) {
+        if (y >= HEIGHT || y < 0 || x >= WIDTH || x < 0)
+            throw new NullPointerException();
+        return board[y][x];
     }
 
     public ArrayList<Field> getWinningFields(FieldColor fc) {
@@ -284,13 +284,3 @@ public class Board {
         findAHop(selected);
     }
 }
-
-/*
-@Test
-    public void testBoardEquals() {
-        Board a = new Board( 2 );
-        Board b = new Board( 2 );
-        assertTrue( a.equals( a ) );
-        assertTrue( a.equals( b ) );
-    }
- */
