@@ -4,6 +4,7 @@ import game.Board;
 import game.Field;
 import game.FieldColor;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -19,16 +20,21 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-public class Client extends Application {
+public class Client extends Application implements Runnable {
     Board board;
-    private boolean gameOn = false;
     XConnection xcon;
     private Listener lst;
     Label showTurn = new Label("");
+    
+    Group root;
+    GridPane menu;
+    
+    double DISPLAY_HEIGHT;
+    double DISPLAY_WIDTH;
+    double RADIUS;
 
     private void setBoard(int playersNum) {
         if (playersNum != 0) {
-            gameOn = true;
         }
         this.board = new Board(playersNum);
     }
@@ -55,12 +61,16 @@ public class Client extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        final double DISPLAY_HEIGHT = Screen.getPrimary().getVisualBounds().getHeight()*0.95, DISPLAY_WIDTH = DISPLAY_HEIGHT;
-        final double RADIUS = 0.025*DISPLAY_HEIGHT;
+        //final double DISPLAY_HEIGHT = Screen.getPrimary().getVisualBounds().getHeight()*0.95, DISPLAY_WIDTH = DISPLAY_HEIGHT;
+        //final double RADIUS = 0.025*DISPLAY_HEIGHT;
 
+    	DISPLAY_HEIGHT = Screen.getPrimary().getVisualBounds().getHeight()*0.95;
+    	DISPLAY_WIDTH = DISPLAY_HEIGHT;
+    	RADIUS = 0.025*DISPLAY_HEIGHT;
+    	
         primaryStage.setTitle("Chinese Checkers");
 
-        Group root = new Group();
+        root = new Group();
         Scene s = new Scene(root, DISPLAY_WIDTH + 190, DISPLAY_HEIGHT);
 
         setBoard(0);
@@ -75,7 +85,7 @@ public class Client extends Application {
             }
         }
 
-        GridPane menu = new GridPane();
+        menu = new GridPane();
         menu.setMinWidth(140);
         menu.setMinHeight(DISPLAY_HEIGHT);
         menu.setStyle("-fx-border-color: black ; -fx-padding: 10 ;");
@@ -155,19 +165,8 @@ public class Client extends Application {
                     clientColor.setFill(Paint.valueOf(FieldColor.values()[xcon.getId()].getColor()));
 
                     if (xcon.getConnectionMessage().getSignal().equals("joined")) {
-                        setBoard(xcon.xwaitForGameStart());
-                        lst = new Listener(this);
-                        menu.add(showTurn, 0, 5);
-                        waitForSignal();
-                        for (int y = 0; y < board.HEIGHT; ++y) {
-                            for (int x = 0; x < board.WIDTH; ++x) {
-                                board.getNode(y, x).setCenterY(DISPLAY_HEIGHT*(y)/(board.HEIGHT-1));
-                                board.getNode(y, x).setCenterX(DISPLAY_WIDTH*((x+1-0.5*(y%2))+2)/board.WIDTH);
-                                board.getNode(y, x).setRadius(RADIUS);
-                                board.getNode(y, x).setFill(Paint.valueOf(board.getNode(y, x).getColor()));
-                                root.getChildren().add(board.getNode(y, x));
-                            }
-                        }
+                    	Thread waitForGame = new Thread( this );
+                    	waitForGame.start();
                     }
                        else if (xcon.getConnectionMessage().getSignal().equals("created")) {
                            menu.add(startGame, 0, 5);
@@ -200,4 +199,31 @@ public class Client extends Application {
         primaryStage.setScene(s);
         primaryStage.show();
     }
+    
+    void gameStart() {
+    	setBoard(xcon.xwaitForGameStart());
+        lst = new Listener(this);
+        menu.add(showTurn, 0, 5);
+        waitForSignal();
+        for (int y = 0; y < board.HEIGHT; ++y) {
+            for (int x = 0; x < board.WIDTH; ++x) {
+                board.getNode(y, x).setCenterY(DISPLAY_HEIGHT*(y)/(board.HEIGHT-1));
+                board.getNode(y, x).setCenterX(DISPLAY_WIDTH*((x+1-0.5*(y%2))+2)/board.WIDTH);
+                board.getNode(y, x).setRadius(RADIUS);
+                board.getNode(y, x).setFill(Paint.valueOf(board.getNode(y, x).getColor()));
+                root.getChildren().add(board.getNode(y, x));
+            }
+        }
+        System.out.println( "Game started!" );
+    }
+
+	@Override
+	public void run() {
+		Platform.runLater(new Runnable() {
+			@Override public void run() {
+				gameStart();
+			}
+		});
+	}
+    
 }
